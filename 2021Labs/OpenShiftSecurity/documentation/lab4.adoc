@@ -27,16 +27,16 @@ DevSecOpsのCI/CDパイプラインでは、次のような技術を使用しま
 - https://www.zaproxy.org/[Zap Proxy]
 
 [#beforeyoustart]
-=== Before you start
+=== 始める前に
 
 The information from the instructor will be used in this lab:
 
-- Access to RHEL 8 VM (bastion) with username and password
-- OpenShift Console URL
-- OpenShift API server
-- OpenShift admin user password
+- RHEL 8 VM (bastion)へのユーザー名とパスワードによるアクセス
+- OpenShift コンソール URL
+- OpenShift API サーバ
+- OpenShift 管理者のユーザ名とパスワード
 
-Here is an example of the registration information:
+以下は登録情報の一例です:
 
 image:images/lab4-devsecops02.png[800,800]
 
