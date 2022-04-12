@@ -1,21 +1,21 @@
-== Lab 4: Implementing DevSecOps to Build and Automate Security into the Application using Red Hat Advanced Cluster Security
+== Lab 4: Red Hat AdvancedClusterSecurity を使用したアプリケーションへの自動化セキュリティの実装とDevSecOpsの構築
 
-=== Lab Objective
+=== ラボの目的
 
-The goal of this lab is to learn how to build a secure software factory that orchestrates a combination of different security tools. With the advent of DevSecOps, security is put front and center - it is addressed in terms of people, processes, and technology. Security tools are integrated right into the build process and we could easily break the build if security requirements are not met with the security gates that we build into the CI/CD pipeline.
+このラボの目標は、さまざまなセキュリティツールの組み合わせをオーケストレーションする、安全なソフトウェアファクトリを構築する方法を学ぶことです。DevSecOps の出現により、セキュリティは前面と中心に置かれ、人、プロセス、および、技術の面で対処されるようになりました。セキュリティツールはビルドプロセスに統合されており、CI/CDパイプラインに組み込まれたセキュリティゲートでセキュリティ要件が満たされない場合、ビルドを簡単に中断することができます。
 
-=== Introduction
+=== 序章
 
-The benefits of DevOps and Continuous Integration / Continuous Delivery (CI/CD) have been demonstrated with great success over the years. Organizations have always sought to do more with less. Security was treated as an add-on to the end of the software delivery process in many cases, and it often delayed software delivery. The industry recognized that this had to change. Organizations must continue to meet contractual and regulatory obligations as well as internal security standards, but need to accelerate software delivery to capitalize on opportunities. To enable organizations to meet these standards and deliver at the speed of DevOps security has faced the choice of becoming irrelevant or molding to modern software delivery practices. Security is critical to deliver software quickly and has become a metric of software quality, so there was a push to include “Sec” in “DevOps.” With the advent of DevSecOps, Shift Left is a practice intended to find and prevent defects early in the software delivery process. Security tools are integrated directly into the build process. As a result, the CI/CD process can move faster and reduce the length of time to delivery while still continuously improving the quality of each release. +
-This lab exercise will focus on some of the technologies used to implement automated security compliance controls within a typical CI/CD application pipeline. +
-A number of tools have been installed and pre-configured to support the DevSecOps pipeline. Most of these tools are running containerized within the Red Hat OpenShift cluster. Here is the pipeline we will be stepping through during our lab:
+DevOpsと継続的インテグレーション／継続的デリバリー（CI/CD）の利点は、長年にわたって大きな成果とともに実証されてきました。組織は常に、より少ない人数でより多くのことを行うことを求めてきました。セキュリティは多くの場合、ソフトウェア提供プロセスの末端のアドオンとして扱われ、ソフトウェアデリバリの遅延につながることも少なくありませんでした。業界は、これを変えなければならないことを認識しました。組織は、契約上および規制上の義務や社内のセキュリティ標準を引き続き満たす必要がありますが、機会を生かすためにソフトウェアデリバリを加速させる必要があります。組織がこれらの標準を満たし、DevOpsのスピードでデリバリーできるようにするために、セキュリティは、無関係になるか、最新のソフトウェアデリバリプラクティスに適合するかの選択に迫られています。セキュリティはソフトウェアを迅速に提供するために不可欠であり、ソフトウェア品質の指標となっているため、"DevOps" に "Sec" を含めることが推奨されています。DevSecOpsの登場により、Shift Leftはソフトウェアデリバリプロセスの早い段階で不具合を発見し、防止することを目的としたプラクティスとなりました。セキュリティツールは、ビルドプロセスに直接統合されます。その結果、CI/CDプロセスをより速く進め、デリバリーまでの期間を短縮しながら、各リリースの品質を継続的に向上させることができるのです。 +
+この実習では、典型的な CI/CD アプリケーションパイプラインに自動化されたセキュリティコンプライアンス制御を実装するために使用される技術のいくつかに焦点を当てます。 +
+DevSecOps パイプラインをサポートするために、多くのツールがインストールされ、事前に設定されています。これらのツールのほとんどは、Red Hat OpenShift クラスター内でコンテナ化されて実行されています。以下は、私たちのラボでステップスルーするパイプラインです:
 
 image:images/lab4-devsecops01.png[800,800]
 
-In our DevSecOps CI/CD pipeline, we will be using several technologies such as:
+DevSecOpsのCI/CDパイプラインでは、次のような技術を使用します:
 
-- https://www.openshift.com/learn/topics/ci-cd[OpenShift Pipelines] based on https://tekton.dev[Tekton]
-- https://www.openshift.com/blog/announcing-openshift-gitops[OpenShift GitOps] based on https://argoproj.github.io/[ArgoCD]
+- https://tekton.dev[Tekton] をベースとした https://www.openshift.com/learn/topics/ci-cd[OpenShift Pipelines] 
+- https://argoproj.github.io/[ArgoCD] をベースとした https://www.openshift.com/blog/announcing-openshift-gitops[OpenShift GitOps]
 - https://www.redhat.com/en/resources/advanced-cluster-security-for-kubernetes-datasheet[Red Hat Advanced Cluster Security for Kubernetes]
 - https://docs.openshift.com/container-platform/latest/registry/architecture-component-imageregistry.html[OpenShift Container Registry]
 - https://www.sonarqube.org/[SonarQube]
