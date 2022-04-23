@@ -1,42 +1,41 @@
 == Lab 3: OpenShift Role Based Access Control (RBAC)
 
 
-=== Goal of Lab 3
+=== Lab 3 のゴール
 
-The goal of this lab is to learn about the capabilities provided by OpenShift Role Based Access Control and how it can be used to access cluster based resources within an application.
+このラボのゴールは、OpenShift Role Based Access Control (RBAC) が提供する機能と、 RBAC を使用してアプリケーション内のクラスターベースのリソースにアクセスする方法について学ぶことです。
 
-=== Introduction
+=== イントロダクション
 
-OpenShift, being a secure platform by default, has included support for authentication and authorization since the beginning of its Kubernetes lineage with version 3.0. Kubernetes originally did not have any form of Role Based Access Control and the work that was pioneered in OpenShift was eventually upstreamed and is now part of core capabilities of Kubernetes. As part of this lab, you will learn the differences between authentication and authorization including how they are implemented within OpenShift along with how they can be configured. Finally, you will use an application running within the platform to extend your knowledge of authentication and authorization to configure custom policies for the application to access cluster based resources.
+OpenShiftはデフォルトでもセキュアなプラットフォームであるため、Kubernetes を取り込んだバージョン3.0から、認証と認可をサポートします。Kubernetes はもともと、Role Based Access Control を持っておらず、OpenShift で開発された作業が最終的にアップストリームに吸収され、現在では Kubernetes のコア機能の一部になっています。このラボの一部では、認証と認可の違いを学び、それらが OpenShift 内でどのように実装され、どのように構成されるかを学びます。最後に、プラットフォーム内で実行されているアプリケーションを使用して、認証と認可の知識を使いながら、アプリケーションがクラスタベースのリソースにアクセスするためのカスタム ポリシーを構成する方法を学んでいきます。
 
+=== OpenShift の認証と認可
 
-=== Authentication and Authorization in OpenShift
+セキュリティの文脈では、基本的な用語として「認証」と「認可」の2つがあります。その違いと、それらが OpenShift にどのように適用されるかを説明します。
 
-Within the context of security, two of the fundamental terms are Authentication and Authorization. Let's break down the differences and how they apply to OpenShift.
+* 認証 - ユーザーの身元を確認すること。
+* 認可 - リソースへのアクセスを確認する。
 
-* Authentication - Verifying the identity of a user
-* Authorization -  Verifying access to a resource
+=== OpenShift の認証
 
-=== OpenShift Authentication
+_ユーザ_ は、OpenShift API に対してリクエストを行うことができるエンティティです。以下のタイプに分かれます。
 
-A _User_ is an entity that can make requests against the OpenShift API. They are broken out in the following types:
+* 一般ユーザー - クラスターにアクセスする一般的な個人
+* システム・ユーザー - _ノード_ などのインフラ関連資産で使用されます。
+* サービスアカウント - プロジェクト/名前空間と関連付けられた特別なシステムユーザー。これらのユーザーは通常、Pod を実行したり、外部システム内でクラスターにアクセスするために使用されます。
 
-* Regular users - Typical individuals that access the cluster
-* System users - For use by infrastructure related assets, such as _nodes_
-* Service Accounts - Special system users that are associated with Projects/Namespaces. These users are typically used to run pods or access the cluster within external systems.
+複数のユーザーを *Groups* に編成して、クラスター内のポリシーをより良く管理することができます。
 
-Multiple users can then be organized into *Groups* to better manage policies within the cluster.
+OpenShift API に対する認証は、以下の方法のいずれかを使用して行われます。
 
-Authentication against the OpenShift API is accomplished using one of the following methods:
+* OAuth Access Tokens - 認証されると、OpenShift API と通信するためのアセットです。
+* X.509 クライアント証明書 - API に対して認証するために証明書を使用します。
 
-* OAuth Access Tokens - Asset for communicating with the OpenShift API once authenticated.
-* X.509 Client Certificates - Use of certificates to authenticate against the API
+==== OpenShift OAuthサーバーとIDプロバイダー
 
-==== OpenShift OAuth Server and Identity Providers
+OpenShift には、ユーザーが API と通信するためのアクセストークンを取得できるようにするための OAuth サーバーが含まれています。OAuth サーバーは、ユーザーに関する情報を保存する多くのIDプロバイダーと統合することができます。一般的な例としては、link:https://docs.openshift.com/container-platform/4.7/authentication/identity_providers/configuring-ldap-identity-provider.html#configuring-ldap-identity-provider[LDAP], link:https://docs.openshift.com/container-platform/4.7/authentication/identity_providers/configuring-htpasswd-identity-provider.html#configuring-htpasswd-identity-provider[HTPasswd], link:https://docs.openshift.com/container-platform/4.7/authentication/identity_providers/configuring-oidc-identity-provider.html#configuring-oidc-identity-provider[OpenID Connect (OIDC)] です.
 
-OpenShift contains an included OAuth server for allowing users to obtain access tokens for communicating with the API. The OAuth server can integrate with a number of identity providers that stores information about users. Common examples are link:https://docs.openshift.com/container-platform/4.7/authentication/identity_providers/configuring-ldap-identity-provider.html#configuring-ldap-identity-provider[LDAP], link:https://docs.openshift.com/container-platform/4.7/authentication/identity_providers/configuring-htpasswd-identity-provider.html#configuring-htpasswd-identity-provider[HTPasswd] and link:https://docs.openshift.com/container-platform/4.7/authentication/identity_providers/configuring-oidc-identity-provider.html#configuring-oidc-identity-provider[OpenID Connect (OIDC)].
-
-A full discussion on OpenShift authentication can be found within the link:https://docs.openshift.com/container-platform/4.7/authentication/understanding-authentication.html[OpenShift Documentation].
+OpenShiftの認証に関する詳しい説明は、 link:https://docs.openshift.com/container-platform/4.7/authentication/understanding-authentication.html[OpenShift Documentation] のリンク先で閲覧できます。
 
 === OpenShift API
 
