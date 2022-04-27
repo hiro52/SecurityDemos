@@ -43,79 +43,80 @@ OpenShift emphasizes the use of declarative configurations and is the foundation
 
 image:images/admission-controller-phases.png[]
 
-==== OpenShift Role Based Access Control (RBAC)
+==== OpenShift の Role Based Access Control (RBAC)
 
-RBAC is used to determine whether a user is allowed to perform a given action. Authorization is managed using the following:
+RBAC は、ユーザーがあるアクションの実行を許可されているかどうかを判断するために使用されます。権限付与は、以下を使用して管理します。
 
-* Rules - Sets of permitted verbs on a set of objects. For example, whether a user or service account can create pods
-* Roles - Collections of rules.
-* Bindings - Associations between users and/or groups with a role.
+* Rules - オブジェクトのセットで許可される動詞のセット。たとえば、ユーザーまたはサービスアカウントが Pod を作成できるかどうかなど。
+* Roles - Rules のコレクション。
+* Bindings - ユーザーおよび/またはグループとロールとの間の関連付け。
 
-Roles and bindings can be created at one of the following scopes:
+Roles および Bindings は、次のいずれかのスコープで作成することができます。
 
-* Local - Scoped to a given project
-* Cluster - Applicable across all projects
+* Local - 与えられたプロジェクトに適用されます。
+* Cluster - すべてのプロジェクトに適用されます。
 
-To simplify access within the platform, several default cluster roles are automatically configured:
+プラットフォーム内のアクセスを簡単にするために、いくつかのデフォルトのクラスターロールが自動的に設定されます。
 
-* `admin` - rights to view any resource in the project and modify any resource in the project except for quota.
-* `basic-user` - A user that can get basic information about projects and users.
-* `cluster-admin` - A super-user that can perform any action in any project. When bound to a user with a local binding, they have full control over quota and every action on every resource in the project.
-* `cluster-status` - A user that can get basic cluster status information.
-* `edit` - A user that can modify most objects in a project but does not have the power to view or modify roles or bindings.
-* `self-provisioner` - A user that can create their own projects.
-* `view` - A user who cannot make any modifications, but can see most objects in a project. They cannot view or modify roles or bindings.
+* `admin` - プロジェクト内のすべてのリソースを表示し、クォータ以外のリソースを変更する権利。
+* `basic-user` - プロジェクトとユーザーに関する基本情報を取得できるユーザーです。
+* `cluster-admin` - すべてのプロジェクトであらゆるアクションを実行できるスーパーユーザーです。ローカルバインディングでユーザーとバインドされている場合、プロジェクト内のすべてのリソースに対してクォータやすべてのアクションを完全に制御することができます。
+* `cluster-status` - クラスタの基本的なステータス情報を取得することができるユーザーです。
+* `edit` - プロジェクト内のほとんどのオブジェクトを変更することができますが、ロールやバインディングを表示したり変更したりする権限は持っていません。
+* `self-provisioner` - 自分自身のプロジェクトを作成できるユーザーです。
+* `view` - 変更はできないが、プロジェクト内のほとんどのオブジェクトを見ることができるユーザー。ロールやバインディングを見たり修正したりすることはできません。
 
-More information on OpenShift RBAC can be found in the link:https://docs.openshift.com/container-platform/4.7/authentication/using-rbac.html[OpenShift Documentation].
+OpenShift RBAC の詳細については、https://docs.openshift.com/container-platform/4.7/authentication/using-rbac.html[OpenShift Documentation] に記載されています。
 
 
-=== Lab Implementation
+=== ラボの実施
 
-To demonstrate many of the capabilities around managing Role Based Access Control in OpenShift, a sample application will be used to showcase not only how applications can be used to communicate with the OpenShift API, but also the levels of permissions that can be granted.
+OpenShift の Role Based Access Control の管理に関する機能を確認するために、サンプルアプリケーションを使用して、アプリケーションが OpenShift API と通信する方法だけでなく、付与できる権限のレベルも紹介します。
 
-==== Prerequisites
+==== 前提条件
 
-Prior to starting the lab, the following should be available to you:
+このラボを開始する前に、次のものが利用可能である必要があります。
 
-* OpenShift environment with cluster level permissions
-* OpenShift Command Line Interface (CLI)
+* クラスターレベルのパーミッションを持つ OpenShift 環境
+* OpenShift コマンドラインインターフェース (CLI)
 
-==== Environment Walkthrough
+==== 環境のウォークスルー
 
-Login to OpenShift using the web console and from the _Administrator_ perspective, on the lefthand navigation pane, expand _Home_ and select *Projects*. If the _Developer_ perspective is shown, select the _Developer_ dropdown and select _Administrator_. Confirm that the *rbac-lab* project is displayed in the list of available projects.
+Web コンソールを使用して OpenShift にログインし、_Administrator_ パースペクティブから、左側のナビゲーションペインで _Home_ を展開し、*Projects* を選択します。Developer_ パースペクティブが表示されている場合は、_Developer_ ドロップダウンを選択し、_Administrator_ を選択します。利用可能なプロジェクトのリストに *rbac-lab* プロジェクトが表示されていることを確認します。
 
 image:images/lab3-1-projects.png[]
 
-By expanding _Workloads_ on the lefthand side, select *Deployments* and confirm `openshift-rbac` is displayed in the list of resources.
+左側の_Workloads_を展開し、*Deployments*を選択し、リソース一覧に`openshift-rbac`が表示されていることを確認します。
 
 image:images/lab3.2-deployments.png[]
 
-NOTE: If `openshift-rbac` is not present, confirm you are in the `rbac-lab` project by selecting `rbac-lab` from the _Project_ dropdown at the top of the screen.
+NOTE: もし、`openshift-rbac`が表示されていない場合は、画面上部の_Project_ドロップダウンから`rbac-lab`を選択して、`rbac-lab`プロジェクトであることを確認してください。
 
-Feel free to browse the around to view the _Pods_, _Secrets_, and _ConfigMaps_ that are part of the application.
+アプリケーションの一部である_Pods_、_Secrets_、_ConfigMaps_を見るために、自由に周辺をブラウズしてください。
 
-Once complete, navigate to the _Route_ that is exposed for the application. Expand the _Networking_ pane on the lefthand navigation pane and select *Routes*.
+完了したら、アプリケーションに公開されている_Route_に移動します。左側のナビゲーションペインにある_Networking_ペインを展開し、*Routes*を選択します。
 
 image:images/lab3.1-routes.png[]
 
-Under the _Location_ column, select the hyperlink to navigate to the application. Depending on the configuration of your environment, you may be presented with an insecure SSL warning as the application is communicating using secure transport. Accept the warning and continue navigating to the application. You should be presented with a screen similar to the following:
+_Location_の列で、ハイパーリンクを選択してアプリケーションに移動します。お使いの環境の設定によっては、アプリケーションが安全なトランスポートを使用して通信しているため、安全でないSSLの警告が表示される場合があります。警告を受け入れて、アプリケーションへのナビゲーションを続行します。以下のような画面が表示されるはずです。
 
-image:images/lab3.1-applicationoverview.png[]
+image:images/lab3.1-applicationoverview.png[] 
 
-The application is a simple golang based service that communicates with OpenShift to query various assets. The "_403 Forbidden_" error that is displayed is expected and we will work to resolve these conditions throughout the course of this exercise.
+このアプリケーションはシンプルな golang のアプリケーションです。
+このアプリケーションは、OpenShiftと通信して様々なアセットを照会する、シンプルなgolangベースのサービスです。表示される"_403 Forbidden_"エラーは予想されるもので、この演習のコース全体を通してこれらの状態を解決するために作業します。
 
-==== API Access For Applications
+==== アプリケーションへの API アクセス
 
-Every pod that is deployed with OpenShift includes a set of tools that make it possible to communicate with the OpenShift API. These tools are found in the `/var/run/secrets/kubernetes.io/serviceaccount` directory.
+OpenShift でデプロイされるすべての Pod には、OpenShift API との通信を可能にするツールのセットが含まれています。これらのツールは、`/var/run/secrets/kubernetes.io/serviceaccount` ディレクトリに存在します。
 
-Using the OpenShift CLI, ensure that you are logged into the cluster and change into the `rbac-lab` namespace.
+OpenShift CLI を使用して、クラスターにログインしていることを確認し、`rbac-lab` namespace に変更します。
 
 [source]
 ----
 oc project rbac-lab
 ----
 
-Once in the project, list the running pods by typing *oc get pods*.
+プロジェクトに入ったら、*oc get pods* と入力して、実行中の Pod をリストアップします。
 
 [source]
 ----
@@ -130,14 +131,14 @@ openshift-rbac-1-deploy   0/1     Completed   0          5h7m
 openshift-rbac-1-xgh4g    1/1     Running     0          5h7m
 ----
 
-Next, start a remote shell session in the running pod.
+次に、実行中のPodでリモートシェルセッションを開始します。
 
 [source]
 ----
 oc rsh $(oc get pod -l=app=openshift-rbac -o jsonpath="{ .items[0].metadata.name }")
 ----
 
-Once a session has been established within the pod, list the contents of the `/var/run/secrets/kubernetes.io/serviceaccount` directory
+Pod 内でセッションが確立されたら、`/var/run/secrets/kubernetes.io/serviceaccount` ディレクトリの中身をリストします。
 
 [source]
 ----
@@ -153,21 +154,21 @@ lrwxrwxrwx. 1 root root 21 Apr 25 14:35 service-ca.crt -> ..data/service-ca.crt
 lrwxrwxrwx. 1 root root 12 Apr 25 14:35 token -> ..data/token
 ----
 
-The following contents are available:
+以下の内容が利用可能です。
 
-* `ca.crt` - OpenShift Certificate Authority (CA)
-* `namespace` - Contains the namespace the pod is currently running within
-* `service-ca.crt` - OpenShift Service Certificate Authority
-* `token` - Contains the OAuth token for the Service Account associated with the running pod
+* `ca.crt` - OpenShift 認証局（CA）。
+* `namespace` - Pod が現在稼働している namespace が格納されています。
+* `service-ca.crt` - OpenShift サービス認証局。
+* `token` - 実行中のポッドに関連付けられたサービスアカウントの OAuth トークンが格納されています。
 
-The contents provided in this directory make it possible for applications to query the OpenShift API using the URL https://kubernetes.default.svc. Try to query this endpoint using the curl command:
+このディレクトリで提供されるコンテンツによって、アプリケーションが URL https://kubernetes.default.svc を使用して OpenShift API に問い合わせることができるようになります。curl コマンドを使用して、このエンドポイントにクエリを実行してみてください。
 
 [source]
 ----
 curl https://kubernetes.default.svc
 ----
 
-Executing the command will result in an error being displayed and indicates that the certificate for Kubernetes is not trusted. Fortunately, we have the CA for Kubernetes in our pod that we can specify. Execute the following command that refers to the CA file as described previously.
+コマンドを実行するとエラーが表示され、Kubernetes 用の証明書が信頼されていないことが分かります。Kubernetes 用のCAが Pod 内にあるので、それを指定することができます。先ほどの CA ファイルを参照する以下のコマンドを実行します。
 
 [source]
 ----
@@ -191,7 +192,11 @@ curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt https://kuber
 }
 ----
 
-Better. We are able to invoke the API, but we are receiving _Forbidden_ error. Notice the message that is displayed. `User \"system:anonymous\" cannot get path \"`. Since we did not provide any credentials, OpenShift maps us into the reserved `system:anonymous` user. The OAuth token can be used to communicate with the API using the service account that is used to run the pod. Let's make one more command that passes authentication as part of the request:
+応答を得ることができるようにはなりました。しかし、APIを呼び出すことはできますが、_Forbidden_ エラーが表示されます。
+
+表示されるメッセージに注目してください。 >>> `User \"system:anonymous" cannot get path \"`
+
+認証情報を入力していないため、OpenShift は予約済みの `system:anonymous` ユーザにマッピングしています。OAuthトークンは、Podの実行に使用しているサービスアカウントを使用してAPIと通信するために使用することができます。リクエストの一部として認証を渡すコマンドをもう一つ作ってみましょう。
 
 [source]
 ----
@@ -219,24 +224,26 @@ curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authoriza
     ...
 ----
 
-Great! We have successfully authenticated against the OpenShift api and see a list of endpoints that are exposed by the OpenShift API.
+やりましたね! 
 
-You can exit out of the running pod by typing `exit` and hit the _Return_ key.
+OpenShift API に対する認証に成功し、OpenShift API によって公開されているエンドポイントのリストが表示されました。
 
-==== Roles and RoleBindings
+実行中の Pod から抜けるには、`exit`と入力して _Return_ キーを押してください。
 
-With a basic understanding of how applications can query information from the OpenShift API, let's return our focus to the example application in the `rbac-lab` namespace. As you can see from the application viewed in the web browser, each of the requests against the API are returning a HTTP 403 error. This error indicates that authentication was successful, however, the user does not have the appropriate rights to access the requested service.
+==== Roles と RoleBindings
 
-The first query attempts to list all _pods_ that are found in the current namespace. Recall that permission scope in OpenShift can either be at a namespace or cluster level. Since listing _pods_ in the current namespace is limited to only a single namespace, a `role` would be applicable for defining the policies that could be applied.
+アプリケーションが OpenShift API から情報を照会する方法の基本を理解した上で、`rbac-lab` 名前空間内のサンプルアプリケーションに焦点を戻してみましょう。Web ブラウザーで表示されるアプリケーションからわかるように、API に対する各リクエストは HTTP 403 エラーを返しています。このエラーは、認証は成功したが、ユーザが要求されたサービスにアクセスする適切な権利を持っていないことを示します。
 
-As covered in the overview section, any policy requires the following considerations:
+最初のクエリは、現在の namespace に存在するすべての _pods_ をリストアップしようとするものです。OpenShiftの権限スコープは、namespace またはクラスターレベルのいずれかになることを思い出してください。現在の namespace にある _pods_ をリストアップするのは単一のネームスペースに限られるので、適用できるポリシーを定義するために `role` が使えます。
 
-* Resources that would be queried
-* Verbs associated to the request
+概要のセクションで説明したように、どのようなポリシーであっても、次の考慮事項が必要です。
 
-With those considerations in mind, a new role can be created for the application to allow the application to `list` all `pods` in the `rbac-lab` namespace.
+* クエリされるリソース
+* リクエストに関連する動詞
 
-Execute the following command to create a new `Role` called `pod-lister` that grants access to `list` all `pods`.
+これらのことを踏まえて、アプリケーションが `rbac-lab` 名前空間内のすべての `pods` を `list` できるように、アプリケーション用に新しいロールを作成することができます。
+
+以下のコマンドを実行して、すべての `pods` を `list` するためのアクセスを許可する `pod-lister` という名前の新しい `Role` を作成します。
 
 [source]
 ----
@@ -248,7 +255,7 @@ oc create role pod-lister --verb=list --resource=pods
 role.rbac.authorization.k8s.io/pod-lister created
 ----
 
-We can view the contents of the `pod-lister` role by executing the following command:
+以下のコマンドを実行することで、`pod-lister`ロールの中身を見ることができます。
 
 [source]
 ----
@@ -275,20 +282,21 @@ rules:
   - list
 ----
 
-Notice how the resources and verbs are organized based on our desired intentions.
 
-With the new role created, the next step is to associate the `pod-lister` role to the Service Account that is used to run the application. By default, all pods in OpenShift execute using the `default` Service Account. The association of namespace scoped roles to an entity, such as a Service Account, is accomplished using a `RoleBinding`.
+リソースと動詞が、意図に基づいてどのように構成されているかに注目してください。
 
-Execute the following command to create a new `RoleBinding` called `pod-listers`:
+新しいロールを作成したら、次のステップでは、`pod-lister` ロールを、アプリケーションを実行するのに使用するサービスアカウントに関連付けます。デフォルトでは、OpenShift のすべての Pod は `default` サービスアカウントを使用して実行されます。名前空間にスコープされたロールをサービスアカウントなどのエンティティに関連付けるには、`RoleBinding` を使用します。
+
+以下のコマンドを実行して、`pod-listers` という名前の `RoleBinding` を新規に作成します。
 
 [source]
 ----
 oc create rolebinding pod-listers --role=pod-lister --serviceaccount=rbac-lab:default
 ----
 
-The `--serviceacount` flag takes the form `<namespace>:<serviceaccount>`
+`--serviceacount` フラグは `<名前空間>:<サービスアカウント>` という形式をとります。
 
-View the contents of the `RoleBinding` by executing the following command:
+以下のコマンドを実行して、`RoleBinding`の中身を確認します。
 
 [source]
 ----
@@ -315,41 +323,45 @@ subjects:
   namespace: rbac-lab
 ----
 
-With the `Role` and `RoleBinding` now created in order for the _default_ Service Account to list pods in the `rbac-lab` namespace, return to the application in the web browser and refresh the page to confirm that a valid response is now being displayed for the first query.
+デフォルトのサービスアカウントで `rbac-lab` ネームスペースの Pod をリストアップするための `Role` と `RoleBinding` が作成されたので、ウェブブラウザでアプリケーションに戻ってページを更新し、最初のクエリに対して有効な応答が表示されていることを確認します。
 
 image:images/lab3.2-pod-list-application.png[]
 
-==== ClusterRoles and ClusterRoleBindings
+==== ClusterRoles と ClusterRoleBindings
 
-With a basic understanding of `Roles` and `RoleBindings` as a way to grant access to resources in a single namespace, let's attempt to resolve the authorization issue that still exists with the application. The next request attempts to list all _namespaces_. Listing all _namespaces_ is a _cluster_ scoped action and as a result, a `Role` cannot be used. Instead, a `ClusterRole` must be created in order to grant access to this resource.
+単一の名前空間のリソースにアクセスを許可する方法として `Roles` と `RoleBindings` を基本的に理解した上で、アプリケーションにまだ存在する認可の問題を解決してみましょう。
 
-Execute the following command to create a new _ClusterRole_ called `namespace-lister` that grants access to _list_ all _namespaces_ in the cluster:
+次のリクエストでは、すべての _namespaces_ をリストアップすることを試みています。すべての _namespaces_ をリストアップすることは、 _cluster_ scoped アクションであり、結果として `Role` を使用することができません。代わりに、このリソースへのアクセスを許可するために、 `ClusterRole` を作成する必要があります。
+
+以下のコマンドを実行して、クラスタ内のすべての_namespaces_へのアクセスを許可する `namespace-lister` という新しい _ClusterRole_ を作成してください。
 
 [source]
 ----
 oc create clusterrole namespace-lister --verb=list --resource=namespace
 ----
 
-NOTE: If you receive an authorization error, be sure that you are logged into OpenShift using an account with elevated access.
+NOTE: 認証エラーが発生した場合は、昇格されたアクセス権を持つアカウントで OpenShift にログインしていることを確認してください。
 
-Now, create a `ClusterRoleBinding` to associate the `pod-lister` _ClusterRole_ to the `default` Service Account in the `rbac-lab` namespace:
+次に、`pod-lister` の _ClusterRole_ を `rbac-lab` ネームスペースの `default` サービスアカウントに関連付けるため、`ClusterRoleBinding` を作成します。
 
 [source]
 ----
 oc create clusterrolebinding namespace-listers --clusterrole=namespace-lister --serviceaccount=rbac-lab:default
 ----
 
-With the _ClusterRole_ and _ClusterRoleBinding_ created, return once again to the application in the web browser and refresh the page. The second query should now display a valid response.
+_ClusterRole_ と _ClusterRoleBinding_ を作成したら、Webブラウザでもう一度アプリケーションに戻り、ページをリフレッシュしてください。2回目のクエリで有効なレスポンスが表示されるはずです。
 
 image:images/lab3.2-namespace-list-application.png[]
 
-NOTE: The number of namespaces may differ based on the contents of your OpenShift environment.
+NOTE: ネームスペースの数は、OpenShift 環境の内容によって異なる場合があります。
 
-==== API Groups
+==== API グループ
 
-For the first few versions of Kubernetes, all of the API resources were located under a single endpoint (`v1`). To promote the emerging ecosystems of consumers looking to take advantage of the compute power of Kubernetes, the concept of link:https://kubernetes.io/docs/concepts/overview/kubernetes-api/#api-groups[API Groups] was created to provide a method to be able to manage their increasing number of API's that would need to be registered. Instead of putting all of the desired endpoints under `v1`, the concept of API groups was created where developers could register their own API and have them be managed in a way similar to the core set of endpoints.
+Kubernetesの最初の数バージョンでは、すべてのAPIリソースが単一のエンドポイント(`v1`)の下に配置されていました。
 
-`Namespaces` and `Pods` are part of the core API group. You may have noticed when creating the `Roles` and `ClusterRoles` the inclusion of the `apiGroups` field as shown below:
+Kubernetesの計算能力を活用しようとする成長著しいエコシステムを促進させるために、登録が必要なAPIの数の増加を管理できる方法を提供するために、link:https://kubernetes.io/docs/concepts/overview/kubernetes-api/#api-groups[API Groups] という概念が作成されました。必要なエンドポイントをすべて `v1` の下に置くのではなく、開発者が独自のAPIを登録し、エンドポイントのコアセットと同様の方法で管理できるAPIグループというコンセプトが作られたのです。
+
+`Namespaces` と `Pods` はコアAPIグループの一部である。`Roles` と `ClusterRoles` を作成する際に、以下のように `apiGroups` フィールドが含まれていることにお気づきかもしれません。
 
 [source]
 ----
@@ -364,7 +376,7 @@ rules:
   ...
 ----
 
-Notice how the `apiGroups` field is empty. This indicates that the desired resource is part of the core group. To view all of the API's that are registered, the following command can be used:
+`apiGroups` フィールドが空であることに注意してください。これは、目的のリソースがコアグループに属していることを示しています。登録されている全てのAPIを表示するには、以下のコマンドを使用することができます。
 
 [source]
 ----
@@ -394,11 +406,16 @@ The _APIVERSION_ column is a representation of both the version and the API grou
 
 For the final exercise, we will make use of a resource outside of the core API group to query all registered users.
 
-==== Methods of Verifying API Access
+_APIVERSION_ カラムは、バージョンとAPIグループの両方を表現しています。最初の数件の結果が、バージョン `v1` のみを含んでいることに注目してください。これは、_daemonsets_ が _apps_ グループに属しているのに対して、それらがcoreグループに属していることを表しています。また、`--namespaced` フラグを追加することで、namespaced もしくは cluster scoped のリソースを制限することができます。
 
-So far, we have used the application as an indicator for determining the level of access that the _default_ Service Account has against the OpenShift API. However, there are other options available that can be used ahead of deployment time in order to validate the desired level of access. Through a concept called link:https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation[_User Impersonation_], requests can be made to appear as if it was originating from another user.
+最後の演習では、コアAPIグループの外にあるリソースを利用して、登録されているすべてのユーザーに問い合わせを行います。
 
-The `--as` flag can be used to specify the user to impersonate. When combined with the `oc auth can-i` command, it provides a method for determining whether a user can access an OpenShift API resource. Try this out by first determining whether your current user can list all users in the cluster by executing the following command:
+==== API アクセスの検証方法
+
+これまで、OpenShift APIに対して _default_ Service Account が持つアクセスレベルを決定するための指標として、アプリケーションを使用してきました。しかし、目的のアクセスレベルを検証するために、デプロイ時に先立って使用できる他のオプションがあります。link:https://kubernetes.io/docs/reference/access-authn-authz/authentication/#user-impersonation[_User Impersonation_]と呼ばれる概念によって、リクエストは他のユーザーから発信されているように見せることができます。
+
+`--as` フラグは、なりすますユーザーを指定するために使用されます。`oc auth can-i` コマンドと組み合わせると、ユーザーが OpenShift API リソースにアクセスできるかどうかを判断する方法が提供されます。試しに、まず以下のコマンドを実行して、現在のユーザーがクラスター内の全ユーザーをリストアップできるかどうかを判断してみましょう。
+
 
 [source]
 ----
@@ -411,9 +428,9 @@ Warning: resource 'users' is not namespace scoped in group 'user.openshift.io'
 yes
 ----
 
-As indicated, since you are logged in with a user with elevated access to OpenShift, you can successfully list all users.
+表示された結果のように、OpenShift への昇格アクセス権を持つユーザーでログインしているため、正常に全ユーザーをリストアップすることができます。
 
-Now, use the User Impersonation capabilities to determine if the _default_ Service Account in the `rbac-lab` namespace can list users.
+次に、User Impersonation 機能を使って、`rbac-lab` ネームスペースにある _default_ Service Account がユーザーをリストアップできるかどうかを確認します。
 
 [source]
 ----
@@ -426,15 +443,18 @@ Warning: resource 'users' is not namespace scoped in group 'user.openshift.io'
 no
 ----
 
-As expected, the _default_ Service Account does not have access. You may also notice that we needed to give the full name for the Service Account. In prior commands when creating `RoleBindings` and `ClusterRoleBindings`, we did not need to provide `system:serviceaccount` as it was assumed through the `--serviceaccount` flag.
+予想通り、_default_ Service Accountはアクセスできません。
 
-In the final section, we wil create policies to enable the application to be able to query the number of users in OpenShift.
+NOTE: サービスアカウントのフルネームを指定する必要があることにもお気づきでしょう。以前のコマンドで `RoleBindings` や `ClusterRoleBindings` を作成する際には、`--serviceaccount` フラグによって `system:serviceaccount` が仮定されていたので、指定する必要はなかったのです。
 
-==== Creating Policies for Resources Outside the Core API
+最後のセクションでは、アプリケーションが OpenShift のユーザー数を問い合わせることができるようにするためのポリシーを作成します。
 
-The process for creating policies for resources outside of the Core API is very similar to those within the Core API. As indicated previously, Users are cluster scoped and with that in mind, the ability to list all users in the cluster requires that a new `ClusterRole` and `ClusterRoleBinding` be created.
 
-The first step is to determine the API group that users are part of. Use the `oc api-resources` command to help determine the API group
+==== Core API 外のリソースに対するポリシーの作成
+
+Core API 以外のリソースに対するポリシーを作成する手順は、Core API 内のポリシーと非常によく似ています。前述したように、Users は cluster scoped であるため、クラスタ内のすべてのユーザーを一覧表示するには、新しい `ClusterRole` と `ClusterRoleBinding` を作成する必要があります。
+
+最初のステップは、ユーザが所属しているAPIグループを決定することです。API グループを決定するために、 `oc api-resources` コマンドを使用します。
 
 [source]
 ----
@@ -446,27 +466,27 @@ oc api-resources | grep users
 users                                                  user.openshift.io/v1                     false        User
 ----
 
-The first column indicates the resource while the second column indicates the API Group.
+1番目のカラムはリソースを、2番目のカラムはAPIグループを表しています。
 
-Now that we know the API Group users are part of, we can create a ClusterRole called `user-lister` using the following command:
+ユーザが所属するAPI Groupがわかったので、以下のコマンドで `user-lister` というClusterRoleを作成することができます。
 
 [source]
 ----
 oc create clusterrole user-lister --verb=list --resource=users.user.openshift.io
 ----
 
-The combination of the resource name and the API Group is used in the `--resource` flag.
+リソース名と API Group の組み合わせが `--resource` フラグで使用されます。
 
-Finally, create a `ClusterRoleBinding` to grant access to the default Service Account to the newly created `ClusterRole`
+最後に、新しく作成した `ClusterRole` にデフォルトのサービスアカウントへのアクセスを許可するために、`ClusterRoleBinding` を作成します。
 
 [source]
 ----
 oc create clusterrolebinding user-listers --clusterrole=user-lister --serviceaccount=rbac-lab:default
 ----
 
-While we could confirm that the application can now query for users, let's use User Impersonation to determine ahead of time whether the default Service Account has the appropriate rights.
+アプリケーションがユーザーを照会できるようになったことを確認することもできますが、デフォルトのサービスアカウントが適切な権利を持っているかどうかを事前に判断するために、ユーザーのなりすましを使用してみましょう。
 
-Execute the following command to impersonate the default Service Account:
+以下のコマンドを実行し、デフォルトの Service Account になりすまします。
 
 [source]
 ----
@@ -479,11 +499,11 @@ Warning: resource 'users' is not namespace scoped in group 'user.openshift.io'
 yes
 ----
 
-With access verified, navigate to the application in the web browser and refresh the page to confirm all of the queries against the OpenShift API return valid results.
+アクセスが確認できたら、Webブラウザでアプリケーションに移動し、ページを更新して、OpenShift API に対するすべてのクエリが有効な結果を返すことを確認します。
 
 image:images/lab3.3-users-list-application.png[]
 
-By completing this lab, you should have a better understanding of the key components of OpenShift's Role Based Access Control and how these capabilities provide for a more secure operating environment.
+このラボを完了することで、OpenShift のロールベースアクセスコントロールの主要コンポーネントと、これらの機能がより安全な運用環境を提供する方法について、より深く理解することができるはずです。
 
 <<top>>
 
