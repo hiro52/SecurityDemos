@@ -6,7 +6,7 @@
 
 === 序章
 
-DevOpsと継続的インテグレーション／継続的デリバリー（CI/CD）の利点は、長年にわたって大きな成果とともに実証されてきました。組織は常に、より少ない人数でより多くのことを行うことを求めてきました。セキュリティは多くの場合、ソフトウェア提供プロセスの末端のアドオンとして扱われ、ソフトウェアデリバリの遅延につながることも少なくありませんでした。業界は、これを変えなければならないことを認識しました。組織は、契約上および規制上の義務や社内のセキュリティ標準を引き続き満たす必要がありますが、機会を生かすためにソフトウェアデリバリを加速させる必要があります。組織がこれらの標準を満たし、DevOpsのスピードでデリバリーできるようにするために、セキュリティは、無関係になるか、最新のソフトウェアデリバリプラクティスに適合するかの選択に迫られています。セキュリティはソフトウェアを迅速に提供するために不可欠であり、ソフトウェア品質の指標となっているため、"DevOps" に "Sec" を含めることが推奨されています。DevSecOpsの登場により、Shift Leftはソフトウェアデリバリプロセスの早い段階で不具合を発見し、防止することを目的としたプラクティスとなりました。セキュリティツールは、ビルドプロセスに直接統合されます。その結果、CI/CDプロセスをより速く進め、デリバリーまでの期間を短縮しながら、各リリースの品質を継続的に向上させることができるのです。 +
+DevOpsと継続的インテグレーション／継続的デリバリー（CI/CD）の利点は、長年にわたって大きな成果とともに実証されてきました。組織は常に、より少ない人数でより多くのことを行うことを求めてきました。セキュリティは多くの場合、ソフトウェア提供プロセスの末端のアドオンとして扱われ、ソフトウェアデリバリの遅延につながることも少なくありませんでした。業界は、これを変えなければならないことを認識しました。組織は、契約上および規制上の義務や社内のセキュリティ標準を引き続き満たす必要がありますが、機会を生かすためにソフトウェアデリバリを加速させる必要があります。組織がこれらの標準を満たし、DevOpsのスピードでデリバリーできるようにするために、セキュリティは、無関係になるか、最新のソフトウェアデリバリプラクティスに適合するかの選択に迫られています。セキュリティはソフトウェアを迅速に提供するために不可欠であり、ソフトウェア品質の指標となっているため、"DevOps" に "Sec" を含めることが推奨されています。DevSecOpsの登場により、Shift Leftはソフトウェアデリバリプロセスの早い段階で不具合を発見し、防止することを目的としたプラクティスとなりました。セキュリティツールは、ビルドプロセスに直接統合されます。その結果、CI/CDプロセスをより速く進め、デリバリーまでの期間を短縮しながら、各リリースの品質を継続的に向上させることができるのです。+
 この実習では、典型的な CI/CD アプリケーションパイプラインに自動化されたセキュリティコンプライアンス制御を実装するために使用される技術のいくつかに焦点を当てます。 +
 DevSecOps パイプラインをサポートするために、多くのツールがインストールされ、事前に設定されています。これらのツールのほとんどは、Red Hat OpenShift クラスター内でコンテナ化されて実行されています。以下は、私たちのラボでステップスルーするパイプラインです:
 
@@ -29,7 +29,7 @@ DevSecOpsのCI/CDパイプラインでは、次のような技術を使用しま
 [#beforeyoustart]
 === 始める前に
 
-The information from the instructor will be used in this lab:
+講師からの情報は、このラボで使用されます:
 
 - RHEL 8 VM (bastion)へのユーザー名とパスワードによるアクセス
 - OpenShift コンソール URL
@@ -40,90 +40,90 @@ The information from the instructor will be used in this lab:
 
 image:images/lab4-devsecops02.png[800,800]
 
-=== User Requirements
+=== ユーザー要件
 
-- Up-To-Date Browser: Chrome and Firefox recommended
-- Command-line with ‘oc’ tool is included in the bastion VM that comes with the lab.
+- 最新のブラウザー: ChromeとFirefoxを推奨
+- コマンドラインと'oc'ツールは、ラボに付属しているBastion VMに含まれています。
 
-* SSH into the assigned VM similar to the below command:
+* 以下のコマンドのように、割り当てられた VM に SSH 接続します:
 +
 [source]
 ----
  ssh lab-user@bastion.GUID.sandbox####.opentlc.com
 ----
 +
-* To check if the oc command-line utility is available, open the terminal and run the following command:
+* oc コマンドラインユーティリティが使用可能かどうかを確認するには、ターミナルを開いて以下のコマンドを実行します:
 +
 [source]
 ----
  oc version
 ----
 +
-* To get the console URL from command-line:
+* コマンドラインからコンソールの URL を取得する場合:
 +
 [source]
 ----
 oc login -u admin api.cluster-{GUID}.{GUID}.sandbox###.opentlc.com:6443
 ----
 +
-API server information for ‘oc login’ can be found in the xref:beforeyoustart[Before You Start].
+‘oc login’ のAPIサーバー情報は、xref:beforeyoustart[始める前に] に記載されています。
 +
-* Alternatively, if we want to setup oc client on our laptop, perform the following steps:
+* また、ラップトップでocクライアントをセットアップする場合は、以下の手順を実行します:
 +
-** Log in to the OpenShift console. OpenShift console admin user password information is provided by the instructor.
-Select the question mark in the top right corner and select “Command Line Tools”
+** OpenShift コンソールにログインしてください。OpenShiftコンソールの管理者ユーザーパスワード情報は、講師から提供されます。
+右上のクエスチョンマークを選択し、“Command Line Tools” を選択します。
 +
 image:images/lab4-devsecops03.png[200,200]
 +
-** Download the oc command-line tool for the operating system of your choice.
-** Move the oc command-line tool to the system executables location for simplicity of access throughout the exercise.
+** 選択したオペレーティングシステム用のocコマンドラインツールをダウンロードします。
+** ocコマンドラインツールをシステムの実行ファイルの場所に移動しておくと、演習中に簡単にアクセスできるようになります。
 +
-For example, on Macbook, run the command
+例えばMacbookの場合、次のコマンドを実行します。
 +
 |===
 |mv <insert-download-path> /usr/local/bin /usr/local/bin/
 |===
 +
-* Internet access to the lab environment
-* Internet access to GitHub
+* インターネット接続可能なラボ環境
+* GitHub へのインターネットアクセス
 
-=== Lab 4.1 Continuous Integration
+=== Lab 4.1 継続的インテグレーション
 
-This first module will run an OpenShift Pipeline and let us explore the steps in a sample secure pipeline. +
-In this lab, we will learn how to start the Tekton pipeline and how to use the tasks to integrate the security and gitops tools within the development lifecycle.
+この最初のモジュールは、OpenShift Pipeline を実行し、サンプルの安全なパイプラインのステップを探ってみましょう。 +
+このラボでは、Tekton パイプラインの開始方法と、開発ライフサイクル内でセキュリティと gitops ツールを統合するためのタスクの使用方法を学習します。
 
-. There are three ways to start the pipeline:
-** Option 1: Use Developer UI to start
-.. Browse to the OpenShift Console URL in the browser
-.. Log in to the console using the provided credentials
-.. If we are not already in the Developer Perspective, select Developer to switch to the developer console in the top left corner.
+. パイプラインを開始するには、3つの方法があります:
+** Option 1: Developer UIを使用して開始する
+.. ブラウザで OpenShift Console の URL を参照する。
+.. 提供された認証情報を使用してコンソールにログインする。
+.. まだ開発者パースペクティブにいない場合は、左上の開発者コンソールに切り替えるためにDeveloperを選択します。
 +
 image:images/lab4-devsecops04.png[200,200]
 +
-.. Navigate to the “ocp-workshop” project
+.. ocp-workshop "プロジェクトに移動します。
 +
 image:images/lab4-devsecops05.png[200,200]
 +
-.. Click 'Pipelines' on the left menu to view all pipelines
+.. 左メニューの 'Pipelines' をクリックすると、すべてのパイプラインが表示されます。
 +
 image:images/lab4-devsecops06.png[400,700]
 +
-.. Click onto the “petclinic-build-dev” pipeline
+.. " petclinic-build-dev "パイプラインをクリックします。
 +
 image:images/lab4-devsecops07.png[600,800]
 +
-.. From the top right corner, click “Actions” → select “start”
+.. 右上の “Actions” をクリック → “start” を選択
 +
 image:images/lab4-devsecops08.png[200,700]
 +
-.. Under “Workspaces”, select PVC and then choose the PVC petclinic-build-workspace as the shared storage path that the pipelines will use at runtime.
-.. Under “maven-settings” select Config Map and choose “maven-settings” as the Config Map
-.. Click start
+.. "Workspaces"でPVCを選択し、パイプラインが実行時に使用する共有ストレージのパスとしてPVC petclinic-build-workspaceを選択します。
+.. "maven-settings" で「Config Map」を選択し、"maven-settings" をConfig Mapとして選択します。
+.. start をクリック
 +
-** Option 2: Command-line to start the pipeline
-The command-line is a convenient way to start the pipeline while testing, and it is a way to simulate a PR or push to git and trigger the pipeline. It is for users who prefer the CLI to start the pipeline.
+** Option 2: コマンドラインからパイプラインを起動する。
+コマンドラインはテスト中にパイプラインを開始するのに便利な方法で、PRやgitへのpushをシミュレートしてパイプラインを起動させる方法です。CLIでパイプラインを開始するのが好きなユーザー向けです。
 +
-.. Run:
+.. 実行:
 +
 [source]
 
@@ -132,19 +132,19 @@ The command-line is a convenient way to start the pipeline while testing, and it
 
 |===
 +
-** Option 3: When new code is pushed to the git repo, it will also trigger the pipeline to start. In this lab, git repo is Gogs. The steps below are for pushing code via the “Gogs” git repo.
-This option may be the most popular from a developer perspective. The pipeline starts from a PR or a push into the git repo and the webhook automatically starts the pipeline.
+** Option 3: 新しいコードがgit repoにpushされると、パイプラインを開始するトリガーにもなります。このラボでは、git repo は Gogs です。以下の手順は、「Gogs」git repo経由でコードをプッシュするためのものです。
+このオプションは、開発者の観点からすると最もポピュラーなものかもしれません。PR や git リポジトリへのプッシュからパイプラインが始まり、webhook が自動的にパイプラインを開始します。
 +
-.. From the dev console, click `Search` on the left nav menu.
-.. Type 'route' and click `Route` from the list.
+.. 開発コンソールから、左のナビメニューにある `Search` をクリックします。
+.. 'route'と入力し、リストの中から`Route`をクリックします。
 +
 image:images/lab4-devsecops09.png[400,400]
 +
-.. Click the `Gogs` route to open the gogs URL:
+.. `Gogs` ルートをクリックすると、gogs の URL が表示されます:
 +
 image:images/lab4-devsecops10.png[400,600]
 +
-.. Click on the `Sign In`, to log in with the _gogsadmin_ credentials:
+.. `Sign In`サインイン`をクリックし、_gogsadmin_の認証情報でログインします。
 +
 image:images/lab4-devsecops11.png[500,400]
 +
@@ -153,326 +153,327 @@ image:images/lab4-devsecops11.png[500,400]
 |Password: openshift
 |===
 +
-.. Select the spring-petclinic repository inside of the gogsadmin account:
+.. gogsadminアカウント内のspring-petclinicリポジトリを選択します:
 +
 image:images/lab4-devsecops12.png[400,700]
 +
-.. Click into the README.md, click in `Edit this file` and introduce a change:
+.. README.mdをクリックし、`Edit this file`をクリックし、変更を加えてください:
 +
 image:images/lab4-devsecops13.png[400,700]
 +
-.. Commit the change that we introduced into the README.md:
+.. 導入した変更をREADME.mdにコミットします:
 +
 image:images/lab4-devsecops14.png[400,700]
 +
-[Note] This is only for demo purposes. Usually, the push to master is not recommended, and it’s a Pull Request / Merge Request from another branch (such as develop) that is used instead.
+[注意] これはあくまでデモのためのものです。通常、master への push は推奨されず、代わりに他のブランチ (例えば develop) からの Pull Request / Merge Request を使用します。
 +
-.. The pipeline will be triggered automatically, please skip to step 6 of this lab to see the Pipeline Runs console.
+.. パイプラインは自動的にトリガーされます。このラボのステップ 6 にスキップして、Pipeline Runs コンソールを確認してください。
 +
-. Open the browser using the provided OpenShift console URL.
-. Log in to the console using the provided credential.
-. Click to `Developer` to switch to the developer console.
+. 提供されたOpenShiftコンソールのURLを使って、ブラウザを開きます。
+. 提供されたクレデンシャルを使用してコンソールにログインします。
+. `Developer`をクリックすると、開発者用コンソールに切り替わります。
 +
 image:images/lab4-devsecops04.png[200,200]
 +
-. Make sure the `ocp-workshop` project is selected.
+. `OCP-Workshop`プロジェクトが選択されていることを確認してください。
 +
 image:images/lab4-devsecops15.png[300,300]
 +
-. Click `Pipelines` on the left menu to view all pipelines.
+. 左メニューの `Pipelines` をクリックすると、すべてのパイプラインが表示されます。
 +
 image:images/lab4-devsecops16.png[400,700]
 +
-. Click onto Pipeline `petclinic-build-dev` and click onto the `Pipeline Runs` tab.
+. パイプラインの `petclinic-build-dev` をクリックし、`Pipeline Runs` タブをクリックします。
 +
 image:images/lab4-devsecops17.png[400,700]
 +
-.  Click onto the Pipeline Run.
+. パイプラインの実行をクリックします。
 +
-Please see the Pipeline Run as shown below when it starts.
+起動すると下図のようなPipeline Runが表示されますので、ご覧ください。
 +
 image:images/lab4-devsecops18.png[500,700]
 +
-The pipeline run will fail at step “image-check” in the pipeline run. This is due to an important severity vulnerability in the image being caught by a pipeline gate policy, stopping the deployment.
+パイプライン実行のステップ「image-check」で失敗します。これは、イメージに含まれる重要な深刻度の脆弱性がパイプラインゲートポリシーに引っかかり、デプロイが停止するためです。
 +
 image:images/lab4-devsecops20.png[500,700]
 +
-The vulnerability has to be fixed for the pipeline to complete successfully. We will do it in the next module. Here is what a successful run looks like.
+パイプラインを正常に完了させるためには、この脆弱性を修正する必要があります。次のモジュールでそれを行います。以下は、正常に実行された場合の様子です。
 +
 image:images/lab4-devsecops19.png[500,700]
 +
-The next module, lab 4.2 will walk through what’s happened and how to resolve it securely.
+次のモジュール、Lab 4.2では、何が起こったのか、それを安全に解決する方法について説明します。
 +
-[Note] In addition to triggering a pipeline run manually, every push to the spring-petclinic git repository on the Gogs git server executes the pipeline.
-. Explore the pipeline! Once the pipeline is started, we can click on each detailed step to explore logs for each step. We’ll direct some of the explorations in the next few steps.
-.. *Source Clone* - app source code is pulled from the Git (Gogs) server installed in this lab.
+[注意] 手動でパイプラインを実行するトリガーに加え、Gogs gitサーバー上のspring-petclinic gitリポジトリにpushするたびに、パイプラインが実行されます。
+. パイプラインを探索しようパイプラインが開始されると、各詳細なステップをクリックして、各ステップのログを探索することができます。次の数ステップで探索の一部を指示します。
+.. *Source Clone* - アプリのソースコードは、このラボにインストールされているGit（Gogs）サーバーから引き出されています。
 +
-[Note] Files persist between steps in the pipeline via workspace that is pre-defined in the pipeline.
+[注意] ファイルは、パイプラインにあらかじめ設定されたワークスペースを介して、パイプラインのステップ間で持続されます。
 +
 image:images/lab4-devsecops24.png[400,700]
 +
-... Copy the git repo URL. Open a browser tab to explore the code
-... The URL takes us to the Gogs git repo as shown below.
+... git repo の URL をコピーします。ブラウザのタブを開いて、コードを探索する
+... URLは以下のようにGogsのgit repoに移動します。
 +
 image:images/lab4-devsecops25.png[600,700]
 +
-... Click onto `gogsadmin` and there are 2 repositories for this lab.
+... `gogsadmin`をクリックすると、このラボのための2つのリポジトリがあります。
 +
-The credentials of gogsadmin user are:
+gogsadminユーザの認証情報は以下の通りです:
 +
 |===
 |User: gogsadmin
 |Pass: openshift
 |===
 +
-.. *Dependency Report* is a step in the pipeline that creates a report of the app dependencies from the source code and uploads it to the report server repository.
+.. *Dependency Report* は、ソースコードからアプリの依存関係のレポートを作成し、レポートサーバーリポジトリにアップロードするパイプラインのステップです。
 +
 image:images/lab4-devsecops26.png[300,700]
 +
-Let’s look at the report!
+reportを見てみましょう!
 +
-... From the dev console, click `Search` on the left nav menu
-... Click Resources, type `route`, and click `Route` from the list
+... 開発コンソールから、左のナビメニューにある `Search` をクリックします。
+... Resourcesをクリックし、`route`と入力、リストから`Route`をクリックします。
 +
 image:images/lab4-devsecops09.png[400,400]
 +
-... Click on the reports repo link
+... reports-repo のリンクをクリック。
 +
 image:images/lab4-devsecops27.png[300,700]
 +
-... Click onto the `petclinic-build` link from the page
+... このページの `petclinic-build` リンクをクリックします。
 +
 image:images/lab4-devsecops28.png[300,500]
 +
-... Continue to click on spring-petclinic → target → site
-... Click on the `Dependencies` from the page. We may examine the details from that page by scrolling down
+... 引き続き、spring-petclinic → target → site をクリックします。
+... そのページから `Dependencies` をクリックします。そのページから、下にスクロールすることで詳細を調べることができます。
 +
 image:images/lab4-devsecops29.png[300,700]
 +
-.. *Unit tests* task is executed in parallel with dependency report.
+.. *Unit tests* タスクは、依存性レポートと並行して実行されます。
 +
 image:images/lab4-devsecops30.png[300,700]
 +
-. *Release-app* is where** **the application is packaged as a JAR and released to the Sonatype Nexus snapshot repository.
+. *Release-app* はアプリケーションをJARとしてパッケージ化し、Sonatype Nexusのスナップショットリポジトリにリリースする場所です。
 +
 image:images/lab4-devsecops31.png[300,700]
 +
-. *Build-image* step is when a container image is built in DEV environment using S2I, pushed to OpenShift internal registry, and tagged with spring-petclinic:[branch]-[commit-sha] and spring-petclinic:latest
+. *Build-image* ステップは、DEV環境でS2Iを使ってコンテナイメージをビルドし、OpenShiftの内部レジストリにプッシュし、spring-petclinic:[branch]-[commit-sha] および spring-petclinic:latest でタグ付けします。
 +
 image:images/lab4-devsecops32.png[300,700]
 
-=== Lab 4.2 DevSecOps steps using Advanced Cluster Security
+=== Lab 4.2 Advanced Cluster Securityを利用したDevSecOpsのステップ
 
-Red Hat Advanced Cluster Security (ACS) for Kubernetes controls clusters and applications from a single console, with built-in security policies. +
-First-generation container security platforms focus on the container. ACS’s focus on Kubernetes helps DevOps and Security teams operationalize security, with a Kubernetes-native architecture that leverages Kube's declarative data and built-in controls for richer context, native enforcement, and continuous hardening. In addition, ACS focuses on Kubernetes helps DevOps and Security teams operationalize security, simplifying the process of protecting the cloud-native application stack.
+Red Hat Advanced Cluster Security (ACS) for Kubernetes は、ビルトインのセキュリティポリシーにより、単一のコンソールからクラスタとアプリケーションを制御します。 +
+第一世代のコンテナセキュリティプラットフォームは、コンテナに焦点を当てます。ACSはKubernetesにフォーカスしており、Kubeの宣言型データとビルトイン制御を活用したKubernetesネイティブアーキテクチャにより、リッチなコンテキスト、ネイティブな実施、継続的なハードニングを実現し、DevOpsとセキュリティチームのセキュリティ運用を支援します。さらに、ACS focuses on Kubernetesは、DevOpsおよびセキュリティチームがセキュリティを運用できるよう支援し、クラウドネイティブなアプリケーションスタックを保護するプロセスを簡素化します。
 
-In this lab, we will learn how ACS integrates into the CI/CD process. ACS not only simplifies the process but provides visibility to the security team in our organization.
-Using https://docs.openshift.com/acs/cli/getting-started-cli.html[roxctl] and ACS API, we integrated several additional security steps into our DevSecOps pipeline:
+このラボでは、ACS が CI/CD プロセスにどのように統合されるかを学びます。ACSはプロセスを簡素化するだけでなく、組織内のセキュリティチームに可視性を提供します。
+ https://docs.openshift.com/acs/cli/getting-started-cli.html[roxctl] ACS API を使って、いくつかの追加のセキュリティステップを DevSecOps のパイプラインに統合しました:
 
-. The *image scan* step uses the ACS Scanner to scan the image generated and pushed in the last step.
+. *image scan* のステップでは、ACSスキャナを使用して、最後のステップで生成され、プッシュされたイメージをスキャンします。
 +
 image:images/lab4-devsecops33.png[300,700]
 +
-The error below in the log is caused by the `pretty` format is deprecated.
+ログにある以下のエラーは、`pretty` フォーマットが非推奨であることが原因です。
 +
 |===
 |ERROR:	invalid output format "pretty" used. You can only specify json or csv
 |===
 +
-To change the format you can do the steps below.
+フォーマットを変更するには、以下の手順で行います。
 
-.. Click `Pipelines` on the left menu
-.. Click onto the `petclinic-build-dev` pipeline
-.. Select `Actions` -> `Edit Pipeline`
-.. Click onto the `image-scan` task and use `csv` instead of `pretty`
+.. 左のメニューから `Pipelines` をクリックします。
+.. `petclinic-build-dev` パイプラインをクリックします。
+.. `Actions` -> `Edit Pipeline`をクリックします。
+.. `image-scan` タスクをクリックし、`pretty` の代わりに `csv` を使用します。
 +
 image:images/lab4.2-image-scan.png[500,700]
 +
-.. Click `Save`
-.. Optionally select `Actions` -> rerun and you will see the actual output of the image-scan.
+.. `Save`をクリックします。
+.. オプションで `Actions` -> rerun を選択すると、イメージスキャンの実際の出力が表示されます。
 +
 image:images/lab4.2-image-scan-withlogs.png[500,700]
 +
-In the logs of this step, there is a direct link to the image scan in ACS.
+このステップのログには、ACSのイメージスキャンへの直接のリンクがあります。
 +
-[Note] If we see a security certificate warning proceeding to that link, ignore it. +
-Copy and paste it into another tab in order to get more information about the scanned image. Enter the following information:
+[注意] もし、そのリンク先にセキュリティ証明書の警告が表示されても無視してください。 +
+コピーして別のタブに貼り付けると、スキャンしたイメージの詳細な情報を得ることができます。以下の情報を入力してください:
 +
 |===
 |User: admin
 |Pass: stackrox
 |===
 +
-The URL takes us to Vulnerability Management. Here is an overview of the vulnerabilities (CVEs) included in this image.
+URLは、Vulnerability Managementに移動します。この画像に含まれる脆弱性(CVE)の概要を説明します。
 +
 image:images/lab4-devsecops35.png[500,700]
 +
-.. Under the Deployment tab
-The ACS tool is aware of if this image is deployed. Since the first pipeline didn’t pass all of its gates, at first there will be no deployments displayed.
+.. Deployment タブで、ACSツールはこのイメージがデプロイされているかどうかを認識します。最初のパイプラインはすべてのゲートを通過しなかったので、最初はデプロイメントが表示されないでしょう。
 
-.. Under the Component tab
-This is a view of all of the components in this image. It lists relevant information, such as the number of CVEs that can be fixed with an upgrade of the component, top CVSS score associated with any of the CVEs in the component, and other deployments that include each component.
+
+.. Component タブは、このイメージ内のすべてのコンポーネントのビューです。コンポーネントのアップグレードで修正可能な CVE の数、コンポーネントの CVE に関連する CVSS スコアのトップ、各コンポーネントを含む他のデプロイメントなどの関連情報が一覧表示されます。
+
 +
 image:images/lab4-devsecops34.png[500,700]
 +
-For example, if we click on the tomcat 9.0.31 component, we will see the details of the component as shown below. This page shows the risk priority, the CVE's information, the location of the component, and the version of the component to upgrade to in order to remediate the CVE.
+例えば、tomcat 9.0.31 コンポーネントをクリックすると、下図のようにコンポーネントの詳細が表示されます。このページには、リスクの優先順位、CVE の情報、コンポーネントの場所、CVE を修正するためにアップグレードするコンポーネントのバージョンが表示されます。
 +
 image:images/lab4.2-tomcat-cve.png[500,700]
 +
-.. Click “X” on the top right to go back
-.. CVEs tab presents a view of all vulnerabilities of the image
+.. 右上の “X” をクリックすると戻ることができます
+.. CVEsタブは、画像のすべての脆弱性を表示します。
 +
 image:images/lab4-devsecops36.png[500,700]
 +
-.. Go back to the `Overview` tab, and scroll down to the `Image findings` section, we will see the fixable CVEs. These are CVEs where ACS knows there are fixes available.
+.. `Overview` タブに戻り、`Image findings` セクションにスクロールダウンすると、修正可能な CVE が表示されます。これらは、ACS が修正可能であることを認識している CVE です。
 +
 image:images/lab4-devsecops37.png[300,700]
 +
-.. Click '>' to expand `Dockerfile` section above the `Image Findings` section, the detailed image components and related CVEs are shown per each step, per the ACS CVE database.
+.. `Image Findings`セクションの上にある `Dockerfile` セクションを '>' をクリックして展開すると、ACS CVEデータベースにより、各ステップごとに詳細なイメージコンポーネントと関連するCVEが表示されます。
 +
 image:images/lab4-devsecops38.png[400,700]
 +
-Feel free to continue to explore ACS before continuing to review the pipeline. Understanding security checks and tool capabilities are a key part of this lab and can help raise the knowledge of a secure software delivery pipeline.
+パイプラインの復習を続ける前に、ACSの探索を自由に行ってください。セキュリティチェックとツールの機能を理解することは、このラボの重要な部分であり、安全なソフトウェア配信パイプラインの知識を高めるのに役立ちます。
 +
-Now, go back to OpenShift Developer console.
-. The *Image Check* step of the pipeline
+ここで、OpenShift Developerのコンソールに戻ります。
+. パイプラインの *Image Check* ステップ
 +
-[Note] The build-time violations of the different security policies defined in ACS.
+[注意] ACSで定義されている様々なセキュリティポリシーのビルド時の違反
 +
 image:images/lab4-devsecops39.png[400,700]
 +
 image:images/lab4-devsecops40.png[400,700]
 +
-This step checks build-time and deploy-time violations of security policies defined in ACS for any deployment that uses this image. Due to security policy violations, this pipeline fails at this task because we set security policy enforcement in ACS.
-Scanning images is critical to prevent highly vulnerable containerized applications from deployment.
+このステップでは、このイメージを使用するすべてのデプロイメントについて、ACS で定義されたセキュリティ ポリシーのビルド時およびデプロイ時の違反をチェックします。セキュリティポリシー違反のため、ACSでセキュリティポリシーの実施を設定したため、このパイプラインはこのタスクで失敗します。
+脆弱性の高いコンテナ型アプリケーションを展開しないためには、イメージのスキャンが重要です。
 
-. *Deploy-check* shows the violation of the policies in the log. The log shows the violations, but it did not fail at this task because the deployment enforcement is not on in this example. We will explore more on the policy in the later lab.
+. *Deploy-check* は、ログにポリシーの違反が表示されます。ログには違反が表示されていますが、この例ではデプロイの強制がオンになっていないため、このタスクで失敗することはありませんでした。この後のラボで、ポリシーの詳細を確認します。
 +
 image:images/lab4-devsecops41.png[400,700]
 +
-[Note] These 3 steps (*deploy-check, image-check, and image-scan*) are executed in parallel to save time in our DevSecOps pipeline.
+[注意] この3つのステップ（*deploy-check, image-check, image-scan*）は、DevSecOpsパイプラインの時間短縮のために並行して実行されます。
 +
-. If *image-check* fails, go to the pipeline run and click `image-check`. The bottom of the log shows `Error: failed policies found: 1 policy violated that are failing the check.` The reason for the error is because ACS enforces the policy from building and deploying if a violation occurs. The pipeline integrates ACS via the roxctl in the Tekton task.
+. もし *image-check* が失敗したら、パイプラインの実行に移動して `image-check` をクリックします。ログの一番下に `Error: failed policies found: 1 policy violated that are failing the check.` と表示されます。このエラーの原因は、違反が発生した場合に ACS がビルドやデプロイからポリシーを強制するためです。パイプラインでは、Tektonタスクのroxctlを介してACSを統合しています。
 +
-When an image violates the policies, the best practice is to fix the code and execute the pipeline until it passes the checks. The logs reported the list of violations and remediation. Developers can take the information from the `image-check` task’s log and make changes accordingly. When the fix is checked into Git, the pipeline will be triggered. We have prepared the xref:fiximage[bonus exercise for fixing the image]. If we would like to continue to test other tasks on the pipeline, we can add an exception to the policy to exclude the spring-petclinic.
-Adding an exception to a policy can be useful when developers need to fix the code, and the CI process needs to continue the testing.
+Imageがポリシーに違反した場合、コードを修正し、チェックに合格するまでパイプラインを実行することがベストプラクティスです。ログには違反の一覧と対処法が報告されています。開発者は `image-check` タスクのログから情報を取得し、それに応じて変更を加えることができます。修正がGitにチェックインされると、パイプラインが起動されます。今回、xref:fiximage[画像を修正するためのボーナスエクササイズ]を用意しました。もし、パイプライン上で他のタスクのテストを続けたい場合は、ポリシーに例外を追加して、spring-petclinicを除外することができます。
+ポリシーに例外を追加することは、開発者がコードを修正する必要があり、CIプロセスがテストを継続する必要がある場合に有効である。
 +
-[Note] Please be aware that fixing the code to pass the violation will be the recommended approach.
+[注意] 違反が通るようにコードを修正することが推奨されるアプローチになることに注意してください。
 +
-Assuming that we will want to add an exception to bypass the policy for spring-petclinic build.
+spring-petclinicビルドのポリシーをバイパスする例外を追加したい場合を想定しています。
 +
-.. When we inspect the log from the *image-check* task, we will find the below message which caused the failure:
+.. *image-check* タスクのログを調べると、以下のような失敗の原因となるメッセージが見つかります:
 +
 |===
 |✗ Image image-registry.openshift-image-registry.svc:5000/ocp-workshop/spring-petclinic@sha256:ece54d2923654c36f4e97bc0410f5c027871c5b7483e977cfc6c2bd56fef625d and '*ERROR: Policy "Fixable Severity at least Important"*'
 |===
 +
-.. Click `waffle icon` image:images/lab4-devsecops42.png[20,20] to get the console links → select `Red Hat Advanced Cluster Security For Kubernetes` as shown below.
+.. `ワッフルアイコン` image:images/lab4-devsecops42.png[20,20] をクリックしてコンソールリンクを表示 → 以下のように `Red Hat Advanced Cluster Security For Kubernetes` を選択します。
 +
 image:images/lab4-devsecops43.png[700,300]
 +
-.. We will be prompted to log in to the ACS console → click `Advanced` → Click the `Proceed to central-stackrox.apps.cluster...` link to proceed.
-.. Enter the following information:
+.. ACSコンソールにログインするよう促されます → `Advanced` をクリック → `Proceed to central-stackrox.apps.cluster...` リンクをクリックして進みます。
+.. 以下の情報を入力してください:
 +
 |===
 |User: admin
 |Pass: stackrox
 |===
 +
-.. Click login, and Re-run the pipeline as shown below.
+.. ログインをクリックし、以下のようにパイプラインを再実行します。
 +
 image:images/lab4-devsecops44.png[300,700]
 +
-.. Click image:images/lab4-devsecops45.png[20,20] on the top left → click Platform Configuration → select Policies
+.. 左上の image:images/lab4-devsecops45.png[20,20] をクリック → Platform Configuration をクリック → Policies を選択します。
 +
 image:images/lab4-devsecops46.png[100,200]
 +
-.. Under Policies, put the policy name *Fixable Severity at least Important* in the search field and hit enter. The policy will list as the result.
+.. Policies の下にある検索フィールドに、ポリシー名 *Fixable Severity at least Important* を入力し、Enterキーを押します。結果、ポリシーが表示されます。
 +
 image:images/lab4-devsecops47.png[300,700]
 +
-[Note] Since we ran into a https://issues.redhat.com/browse/ROX-9938[bug] on the UI and we will not be able to add the build image exception to the policy via the ACS UI. The steps here is a workaround. In ACS v3.70, will be able to add build image without SHA via UI.
+[注意] UI上で https://issues.redhat.com/browse/ROX-9938[bug] に遭遇したため、ACS UI経由でポリシーにビルドイメージの例外を追加することができなくなります。ここでの手順は、回避策です。ACS v3.70では、SHAなしでUI経由でビルドイメージを追加できるようになります。
 +
-* Click onto `Fixable Severity at least Important` to the policy details page. The Policy page allows edit, clone, export and disable policy under `Actions`. Click 'Clone policy' under `Actions`. Developers can use the information in the guidance to fix the image. The lifecycle stage information is where the policy enforcement takes place. Since the enabled policy is violated, it will not pass the build and deploy stages in the pipeline.
+* `Fixable Severity at least Important` をクリックすると、ポリシーの詳細ページが表示されます。ポリシーページでは、`Actions` の下でポリシーの編集、クローン、エクスポート、無効化ができます。`Actions` の下にある 'Clone policy' をクリックします。開発者はガイダンスの情報を使って、イメージを修正することができます。ライフサイクルステージの情報は、ポリシーの強制が行われる場所です。有効なポリシーに違反しているため、パイプラインのビルドとデプロイのステージを通過することはできません。
 +
 image:images/lab4-devsecops48.png[300,700]
 +
-* Enter the clone policy name as `Fixable Severity at least Important - with Exception`
+* クローンポリシー名を `Fixable Severity at least Important - with Exception` と入力します。
 +
 image:images/lab4.2-5-clone-policy-name.png[300,700]
 +
-* Click `Next`
-* Click `Next` on the Policy behavior
-* Click `Next` on Policy criteria  in order to get to the Policy scope section UI in order to exclude the image
-* Under Exclude images section, type the following to filter the options in in `Excluded Images (Build Lifecycle only)` list:
+* `Next` をクリックします。
+* ポリシーの動作で `Next` をクリックします。
+* 画像を除外するために、Policy criteria の `Next` をクリックし、Policy scope セクションの UI を表示します。
+* Exclude imagesセクションで、`Excluded Images (Build Lifecycle only)` リストのオプションをフィルタリングするために以下をタイプします:
 +
 |===
 |image-registry.openshift-image-registry.svc:5000/ocp-workshop/spring-petclinic
 |===
 +
-* Select one of the spring-petclinic image.
+* spring-petclinic のImageを1つ選択してください。
 +
 image:images/lab4.2-5-exclude-image.png[300,700]
 +
-* Click `Next`
-* Please review Policy before click `Save`
-* Now we need to update the newly created image exception policy `Fixable Severity at least Important - with Exception`
-* Click Policies on the left menu
-* Search for `Fixable Severity at least Important - with Exception` policy
+* `Next` をクリックします。
+* `Save` をクリックする前に、ポリシーをご確認ください。
+* ここで、新しく作成した Image例外ポリシー `Fixable Severity at least Important - with Exception` を更新する必要があります。
+* 左メニューの `Policies` をクリックします。
+* `Fixable Severity at least Important - with Exception` のポリシーを検索してください。
 +
 image:images/lab4.2-5-exceptionPolicy.png[300,700]
 +
-* Click onto the policy
-* Click Actions -> Export policy to JSON
+* ポリシーをクリックします。
+* Actions をクリック -> Export policy to JSON をクリック
 +
 image:images/lab4.2-5-exportPolicy.png[300,700]
 +
-* Save it as a selected local filesystem
-* Open the JSON file using your favorite editor
+* 選択したローカルファイルシステムとして保存します。
+* JSONファイルをお好みのエディタで開きます。
 +
 image:images/lab4.2-5-editPolicy.png[300,700]
 +
-* Remove the `@sha256:..`` and the rest of the SHA from the image name
+* Image名から `@sha256:..` 以降のSHA部分を削除します。
 +
 image:images/lab4.2-5-editpolicy2.png[300,700]
 +
-* Save the file
-* Back to ACS console to the `Fixable Severity at least Important - with Exception` Policy details page, Select `Actions` -> `Delete policy`
-* Click `Policies` on the left menu
-* Click `Import policy` on the top right corner
-* Click `Upload` and select the JSON file that you edited.
+* ファイルを保存します。
+* ACS コンソールに戻り、 `Fixable Severity at least Important - with Exception` ポリシー詳細ページで、 `Actions` -> `Delete policy` を選択します。
+* 左メニューの `Policies` をクリックします。
+* 右上の `Import policy` をクリックします。
+* `Upload` をクリックし、編集したJSONファイルを選択します。
 +
 image:images/lab4.2-5-importPolicy.png[200,500]
 +
-* Click `Begin import`
-* Select with 'Fixable Severity' under the Policies
+* `Begin import` をクリックします。
+* ポリシー 'Fixable Severity' を選択してください。
 +
 image:images/lab4.2-5-filterPolicy.png[300,700]
 +
-* Click 3-dot icon at the end of the `Fixable Severity at least Important` policy -> select `Disable policy`
+* `Fixable Severity at least Important` の末尾の3点アイコンをクリック -> select `Disable policy` を選択します。
 +
 image:images/lab4.2-5-disablePolicy.png[300,700]
 +
-.. Now, the `Fixable Severity` policies are shown below.
+.. これで、`Fixable Severity`のポリシーは以下のようになります。
 +
 image:images/lab4.2-5-2Policy.png[300,700]
 +
-.. Switch back to the OpenShift developer console, and click pipeline on the nav under “ocp-workshop” project
+.. OpenShift developer console に戻り、ナビの “ocp-workshop” プロジェクトの下にあるパイプラインをクリックします。
 +
 image:images/lab4-devsecops52.png[300,700]
 +
-.. Rerun the pipeline
+.. パイプラインを再実行します。
 +
 image:images/lab4-devsecops53.png[300,700]
 +
-.. Click onto the Pipeline Runs tab and click on the Pipeline Run we started
+.. Pipeline Runsタブをクリックし、開始したPipeline Runをクリックします。
 +
 image:images/lab4-devsecops54.png[300,700]
 +
 image:images/lab4-devsecops55.png[300,700]
 +
-.. If we finish the xref:fiximage[bonus lab] to fix the image, go back to the policy and remove the exception in the Policy.
-.. Kubernetes kustomization files are updated in the *update deployment step* with the latest image [commit-sha] in the overlays for dev. This will ensure that our applications are deployed using the specific built image in this pipeline.
+.. xref:fiximage[bonus lab] でImageを修正し終えたら、ポリシーに戻って、ポリシーの例外を削除します。
+
+.. Kubernetes kustomization ファイルは、*update deployment step* で、dev用のオーバーレイにある最新のイメージ [commit-sha] で更新されます。これにより、私たちのアプリケーションは、このパイプラインで特定のビルドされたイメージを使用してデプロイされることが保証されます。
 +
 image:images/lab4-devsecops56.png[300,700]
 
