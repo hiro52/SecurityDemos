@@ -307,11 +307,11 @@ URLは、Vulnerability Managementに移動します。この画像に含まれ�
 +
 image:images/lab4-devsecops35.png[500,700]
 +
-.. Deployment タブで、ACSツールはこのイメージがデプロイされているかどうかを認識します。最初のパイプラインはすべてのゲートを通過しなかったので、最初はデプロイメントが表示されないでしょう。
+.. Deployment タブで、
+ACSツールはこのイメージがデプロイされているかどうかを認識します。最初のパイプラインはすべてのゲートを通過しなかったので、最初はデプロイメントが表示されないでしょう。
 
-
-.. Component タブは、このイメージ内のすべてのコンポーネントのビューです。コンポーネントのアップグレードで修正可能な CVE の数、コンポーネントの CVE に関連する CVSS スコアのトップ、各コンポーネントを含む他のデプロイメントなどの関連情報が一覧表示されます。
-
+.. Component タブは、
+このイメージ内のすべてのコンポーネントのビューです。コンポーネントのアップグレードで修正可能な CVE の数、コンポーネントの CVE に関連する CVSS スコアのトップ、各コンポーネントを含む他のデプロイメントなどの関連情報が一覧表示されます。
 +
 image:images/lab4-devsecops34.png[500,700]
 +
@@ -478,286 +478,286 @@ image:images/lab4-devsecops55.png[300,700]
 image:images/lab4-devsecops56.png[300,700]
 
 
-=== Lab 4.3 Continuous Delivery Using GitOps
+=== Lab 4.3 GitOpsを使った継続的デリバリー
 
-GitOps is a declarative way to implement continuous deployment for cloud-native applications. We can use GitOps to create repeatable processes for managing OpenShift Container Platform clusters and applications across multi-cluster Kubernetes environments. GitOps handles and automates complex deployments at a fast pace, saving time during deployment and release cycles. +
-The GitOps workflow pushes an application through development, testing, staging, and production. GitOps either deploys a new application or updates an existing one, so we only need to update the repository; GitOps automates everything else.
+GitOpsは、クラウドネイティブなアプリケーションの継続的なデプロイメントを実装するための宣言的な方法です。GitOpsを使用して、マルチクラスタKubernetes環境にわたるOpenShift Container Platformクラスタとアプリケーションを管理するための反復可能なプロセスを作成することができます。GitOpsは、複雑なデプロイメントを高速に処理し自動化することで、デプロイとリリースサイクルの時間を短縮します。+
+GitOps のワークフローは、アプリケーションを開発、テスト、ステージング、そして本番へとプッシュします。GitOps は新しいアプリケーションをデプロイするか既存のアプリケーションを更新するので、私たちはリポジトリを更新するだけでよく、他のすべては GitOps が自動化します。
 
-Argo CD continuously monitors the configurations stored in the Git repository and uses Kustomize to overlay environment-specific configurations when deploying the application to DEV and STAGE environments.
+Argo CD は Git リポジトリに保存された設定を継続的に監視し、DEV および STAGE 環境にアプリケーションをデプロイする際に、Kustomize を使用して環境固有の設定をオーバーレイします。
 
 image:images/lab4-devsecops57.png[300,700]
 
-. The ArgoCD application syncs the manifests in our Gogs git repositories, and applies the changes automatically into the namespaces defined:
-.. Click on the waffle icon on the top to get to the console links and select “Cluster Argo CD”
+. ArgoCD アプリケーションは、Gogs の git リポジトリにあるマニフェストを同期し、定義されたネームスペースに自動的に変更を適用します:
+.. 上部のワッフルアイコンをクリックしてコンソールリンクに移動し、"Cluster Argo CD "を選択します。
 +
 image:images/lab4-devsecops43.png[300,300]
 +
-.. The link redirects to the Argo CD login. If it is the first time logging in to Argo CD, please click `Advanced` → `Proceed to openshift-gitops-server-openshift-gitops.apps…` link.
-.. In order to be able to log in as an "admin" user, please first retrieve its password by running the command as shown below.
+.. リンクは Argo CD のログインにリダイレクトされます。初めてArgo CDにログインする場合は、'Advanced' → 'Proceed to openshift-gitops-server-openshift-gitops.apps...' のリンクをクリックしてください。
+.. "admin" ユーザーとしてログインするためには、まず、以下のコマンドを実行して、そのパスワードを取得してください。
 +
 [source]
 ----
 oc get secret/openshift-gitops-cluster -n openshift-gitops -o jsonpath='{.data.admin\.password}' | base64 -d
 ----
 +
-.. Once logged in, the applications are listed on the Argo CD console as shown below.
+.. ログインすると、以下のように Argo CD コンソールにアプリケーションがリストアップされます。
 +
 image:images/lab4-devsecops58.png[500,600]
 +
-.. Click onto `dev-spring-petclinic` to access the application.
-. ArgoCD will deploy every manifest that is defined in the branch/repo of our application. The application shows “Synced”.
+.. 'dev-spring-petclinic' をクリックすると、アプリケーションにアクセスできます。
+. ArgoCD は、アプリケーションの branch/repo に定義されているすべてのマニフェストをデプロイします。アプリケーションには "Synced" と表示されています。
 +
 image:images/lab4-devsecops59.png[300,700]
 +
-.. Click image:images/lab4-devsecops101.png[100,90] to view the details of the `dev-spring-petclinic` application.
+.. image:images/lab4-devsecops101.png[100,90] をクリックすると 'dev-spring-petclinic' アプリケーションの詳細が表示されます。
 +
 image:images/lab4-devsecops102.png[900,700]
 +
-.. The details above show the namespace where the application is deployed. Back to the OpenShift Dev console, click `Topology` on the left navigation menu under devsecops-dev project. Click the arrow to access the application URL.
+.. 上記の詳細には、アプリケーションがデプロイされているネームスペースが表示されます。OpenShift Dev コンソールに戻り、左側のナビゲーションメニューから devsecops-dev project の下にある 'Topology' をクリックします。矢印をクリックすると、アプリケーションの URL にアクセスできます。
 +
 image:images/lab4-devsecops60.png[300,500]
 +
-* Application shows as below.
+* アプリケーションは以下のように表示されます。
 +
 image:images/lab4-devsecops61.png[500,500]
 +
-.. Go back to the Argo CD console. Click `Applications` on the top left.
+.. Argo CD コンソールに戻ります。左上の 'Applications' をクリックします。
 +
-[Note] The namespace for `stage-spring-petclinic` is set to devsecops-qa.
+[注意]  `stage-spring-petclinic` の namespace は devsecops-qa に設定されています。
 +
 image:images/lab4-devsecops62.png[300,300]
 +
-.. Click `stage-spring-petclinic`
+.. `stage-spring-petclinic` をクリック
 +
 image:images/lab4-devsecops63.png[300,700]
 +
-.. Click image:images/lab4-devsecops64.png[40,50] on the top menu to deploy the application to devsecops-qa and wait until “Synced” as shown below.
+.. トップメニューの image:images/lab4-devsecops64.png[40,50] をクリックして、アプリケーションを devsecops-qa にデプロイし、以下のように “Synced” されるまで待ちます。
 +
 image:images/lab4-devsecops65.png[300,700]
 +
-.. Back to the OpenShift Dev console, click `Topology` on the left navigation menu under devsecops-qa project. Click the arrow to access the application URL.
+.. OpenShift Dev コンソールに戻り、左のナビゲーションメニューから devsecops-qa project の下にある 'Topology' をクリックします。矢印アイコンをクリックして、アプリケーションの URL にアクセスします。
 +
 image:images/lab4-devsecops66.png[300,300]
 +
-.. The application is now deployed to the devsecops-qa project as shown below.
+.. 以下のように、devsecops-qa プロジェクトにアプリケーションがデプロイされました。
 +
 image:images/lab4-devsecops67.png[300,500]
 
-=== Lab 4.4 PostCI - Dynamic Application Security and Testing (DAST)
+=== Lab 4.4 PostCI - ダイナミックアプリケーションセキュリティとテスト (DAST)
 
-*Dynamic application security testing (DAST)* is designed to detect conditions indicative of a security vulnerability in an application in its running state. DAST has an important role in helping to identify vulnerabilities in an application during production. Running a DAST penetration test enables us to find those vulnerabilities before an attacker does.
-In this lab, ZAP is used to perform application security testing as an example. Performance tests and penetration tests start in parallel after the application is promoted from Dev to QA.
+*動的アプリケーションセキュリティテスト (DAST)* は、アプリケーションの実行状態において、セキュリティ上の脆弱性を示唆する状態を検出するために設計されています。DASTは、運用中のアプリケーションの脆弱性を特定する上で重要な役割を担っています。DASTの侵入テストを実行することで、攻撃者よりも先にそれらの脆弱性を発見することができます。
+このラボでは、例としてZAPを使用してアプリケーションセキュリティテストを実施します。アプリケーションがDevからQAに昇格した後、パフォーマンステストとペネトレーションテストが並行して開始されます。
 
-. Our CI in Openshift Pipelines waits until the ArgoCD app is fully synced (*Wait Application step*) and our app and all the resources are deployed
-.. Go to the successful pipeline run, and go to the step *wait-application*
+. Openshift Pipelines の CI は、ArgoCD アプリが完全に同期され (*Wait Application step*) 、私たちのアプリとすべてのリソースがデプロイされるまで待ちます。
+.. 成功した実行済のパイプラインに移動し、ステップ *wait-application* に移動します。
 +
 image:images/lab4-devsecops68.png[300,700]
 +
-.. Click onto the step, the log is shown below.
+.. ステップをクリックすると、以下のようなログが表示されます。
 +
-This step authenticates into an ArgoCD instance and initiates the synchronization process for 'dev-spring-petclinic' application from Git repo (gogs) to the target project in the OCP cluster.
+このステップでは、ArgoCD インスタンスへの認証を行い、Git リポジトリ（gogs）から OCP クラスタ内のターゲットプロジェクトに 'dev-spring-petclinic' アプリケーションの同期処理を開始します。
 +
 image:images/lab4-devsecops69.png[300,700]
 +
-. Click on the pipeline the step *perf-test-clone*
+. パイプラインをクリックして、*perf-test-clone* のステップを実行します。
 +
-The performance tests are cloned (*Performance Tests Clone*) into our pipeline workspace as shown below.
+パフォーマンステストは、以下のようにパイプラインのワークスペースにクローン（*Performance Tests Clone*）されます。
 +
 image:images/lab4-devsecops70.png[300,700]
 +
-. Click onto step *pentesting-test*
+. ステップ *pentesting-test* をクリックします。
 +
-The pentesting is executed (*Pentesting Test*) using the web scanner https://www.zaproxy.org/[OWASP Zap Proxy] using a baseline to check the possible vulnerabilities. A Zap Proxy report is uploaded to the report server repository.
-See the result from the bottom of the log.
+Web スキャナ https://www.zaproxy.org/[OWASP Zap Proxy] を用いて、ベースラインを用いたペンテストを実行し（*ペンテストテスト*）、可能性のある脆弱性を確認します。Zap Proxyのレポートがレポートサーバーリポジトリにアップロードされます。
+結果はログの最下行からご覧ください。
 +
 image:images/lab4-devsecops72.png[300,700]
 +
-. A performance report is uploaded to the report server repository.
-.. Click `Route` on the left navigation, click `reports-repo` route location.
+. パフォーマンスレポートがレポートサーバーリポジトリにアップロードされます。
+.. 左側のナビゲーションの `Route` をクリックし、`reports-repo` のルートロケーションをクリックします。
 +
 image:images/lab4-devsecops73.png[300,700]
 +
-.. The link has the name that corresponds to the name of the PipelineRun.
-.. Please click on the link with the same name as the PipelineRun. A similar link is shown below.
+.. リンクは、PipelineRun の名前に対応した名前を持っています。
+.. PipelineRun と同じ名称のリンクをクリックしてください。同様のリンクは以下の通りです。
 +
 image:images/lab4-devsecops75.png[300,400]
 +
-.. Go to petclinic-build-dev-XXXXXX.html under the route location
+.. ルートの場所の下にある petclinic-build-dev-XXXX.html にアクセスしてください。
 +
 image:images/lab4-devsecops76.png[300,700]
 +
-. In parallel, the performance tests are executed using the load test https://gatling.io/[Gatling]. Click “performance-test” from the pipeline run.
+. 並行して、負荷テスト https://gatling.io/[Gatling] を使ってパフォーマンステストが実行されます。パイプラインの実行から "performance-test" をクリックします。
 +
 image:images/lab4-devsecops77.png[300,700]
 +
-.. Scroll down to see the report location
+.. レポートの場所を見るにはスクロールしてください
 +
 image:images/lab4-devsecops78.png[300,700]
 +
-.. Go back to the report repo location:
+.. レポートのレポの場所に戻ります:
 +
 image:images/lab4-devsecops79.png[300,400]
 +
-.. Click on the link that matches the name of Pipeline Run, then select the link corresponding to the "addvisitsimulation" performance test that is also shown in the `performance-test` task log.
+.. Pipeline Runの名前に一致するリンクをクリックし、`performance-test` タスクログにも表示されているパフォーマンステスト "addvisitsimulation" に対応するリンクを選択します。
 +
 image:images/lab4-devsecops80.png[200,400]
 +
-.. Please see the result of the performance test page similar to the image below.
+.. 下の画像のようなパフォーマンステストのページをご覧ください。
 +
 image:images/lab4-devsecops81.png[400,700]
 
 
-=== Lab 4.5 Security Policies and CI Violations
+=== Lab 4.5 セキュリティポリシーとCI違反について
 
-In this demo, we can control the security policies applied to our pipelines, scan the images, and analyze the different deployment templates used to deploy our applications. +
-We can enforce the different Security Policies in ACS, failing our CI pipelines if a violation of this policy appears in each step of our DevSecOps pipelines (steps “image-check”, “image-scan”, “deploy-check”).
+このデモでは、パイプラインに適用されるセキュリティポリシーの制御、イメージのスキャン、アプリケーションのデプロイに使用されるさまざまなデプロイメントテンプレートの分析が可能です。+
+ACSで異なるセキュリティポリシーを適用し、このポリシー違反がDevSecOpsパイプラインの各ステップ（ステップ “image-check”, “image-scan”, “deploy-check”) に現れるとCIパイプラインを失敗させることが可能です。 
 
-* Click on the `waffle icon` and select `Red Hat Advanced Cluster Security for Kubernetes`
+* `waffle icon` をクリックし、 `Red Hat Advanced Cluster Security for Kubernetes` を選択します。
 +
 image:images/lab4-devsecops43.png[300,300]
 +
-* Log in using credential admin/stackrox to ACS console.
+* ACS コンソールに admin/stackrox というクレデンシャルでログインしてください。
 +
 image:images/lab4-devsecops82.png[300,700]
 +
-* Click Platform Configuration → Policies
+* Platform Configuration → Policies をクリックします。
 +
 image:images/lab4-devsecops83.png[200,200]
 +
-Security Policies can be defined at the BUILD level (during the build/push of the image), or at the DEPLOYMENT level (preventing the deployment of the application).
-* Click on the Package manager policy
+セキュリティポリシーは、BUILDレベル（イメージのビルド/プッシュ時）、またはDEPLOYMENTレベル（アプリケーションのデプロイを阻止する）で定義することができます。
+* Package manager policy をクリックします。
 +
 image:images/lab4-devsecops84.png[300,700]
 +
-For example, this Security Policy checks if an RH Package Manager (dnf, yum) is in the application Image and will FAIL the pipeline if it detects that the image built contains any RH Package Manager.
-* The policy details can be modified. Also, the lifecycle stages are defined by the policy and other properties. The enablement of the Policy option is where the user controls the CI to fail or pass.
+例えば、このセキュリティポリシーは、アプリケーションイメージにRHパッケージマネージャ（dnf、yum）が含まれているかどうかをチェックし、ビルドされたイメージにRHパッケージマネージャが含まれていることを検出するとパイプラインをFAILにします。
+* ポリシーの内容は変更することができます。また、ライフサイクルステージは、ポリシーとその他のプロパティで定義されます。ポリシーオプションを有効にすると、ユーザーがCIを制御して失敗または合格することができます。
 +
 image:images/lab4-devsecops85.png[300,700]
 +
-* Click `Actions` -> `Edit policy`
-* Click `Next` on `Policy details`
-* Select `Inform and enforce` under Response method
-* Select `Enforce on Build` for Build
+* `Actions` -> `Edit policy` をクリックします。
+* `Policy details` の `Next` をクリックします。 
+* レスポンスの方法は `Inform and enforce` を選択します。
+* ビルド時 `Enforce on Build` を選択します。
 +
 image:images/lab4-devsecops87.png[300,700]
 +
-* Click `Next`, `Next`, `Next` and `Save`
-This step ensures that users  have total control of the pipelines. No image is pushed into the image registry or is deployed to the cluster that surpasses the defined Security Policies.
+* `Next`, `Next`, `Next` そして `Save` と順番にクリックします。
+このステップでは、ユーザがパイプラインを完全に制御できるようにします。定義されたセキュリティポリシーを超えるImageは、イメージレジストリにプッシュされたり、クラスタにデプロイされることはありません。
 
 
 [#fiximage]
-=== Bonus suggestion for Lab 4.2: Fixing the image
+=== Lab 4.2のボーナスラボ：Image を修正する
 
-To show a complete demo and show the transition from a `bad image` to an image that passes the build enforcement, we can update the Tekton task of the image build and fix the image.
-In this example, we will be enabling the enforcement of the `Red Hat Package Manager in Image` policy in ACS, which will fail our pipeline at the image-check as both yum and rpm package managers are present in our base image.
+`bad image`からビルド強制に合格するImageへの移行を示せる、完全なデモのために、Image ビルドのTektonタスクを更新し、Imageを修正することができます。
+この例では、ACS で `Red Hat Package Manager in Image` ポリシーの実施を有効にしています。これは、ベースイメージに yum と rpm の両方のパッケージマネージャーが存在するため、イメージチェックでパイプラインが失敗することになります。
 
-. Add an exception to bypass the violation in the *Fixable Severity at least important* policy as we did in the previous section.
-. Enable enforcement of the *Red Hat Package Manager in Image* policy:
-.. Go to `Platform Configuration` → `Policies`
-.. Search for `Red Hat Package Manager in Image` policy
+. 前のセクションで行ったように、*Fixable Severity at least important* ポリシーで違反を回避する例外を追加します。
+. *Red Hat Package Manager in Image* ポリシーの実施を有効にします:
+.. `Platform Configuration` → `Policies` に移動します。
+.. `Red Hat Package Manager in Image` のポリシーを検索します。
 +
 image:images/lab4-devsecops88.png[300,700]
 +
-.. Click onto the `Red Hat Package Manager in Image` policy
-.. Click `Actions` -> `Edit policy`
-.. Click `Next`
-.. Select `Inform and enforce`
-.. Ensure select `Enforce on Build` in Build under `Configure enforcement behavior`
+.. `Red Hat Package Manager in Image` policy をくりっくします。
+.. `Actions` -> `Edit policy` をクリックします。
+.. `Next` をクリックします。
+.. `Inform and enforce` を選択します。
+.. `Configure enforcement behavior`の Build で `Enforce on Build` を選択したことを確認します。
 +
 image:images/lab4-devsecops87.png[300,600]
 +
-.. Click `Next` until reaching `Review policy` page
-.. Click `Save` (if any modification apply)
-.. Go to the OpenShift Dev UI, click Pipelines on the left → click `petclinic-build-dev` pipeline → click Actions on the top right corner → select `Start last run`
+.. `Next` をクリックし `Review policy` ページに移動します。
+.. `Save` をクリックします(変更がある場合)。
+.. OpenShift Dev UI を開き、左側の Pipelines をクリック → `petclinic-build-dev` pipeline をクリック → 右上の Actions をクリック → `Start last run` を選択します。
 +
 image:images/lab4-devsecops91.png[300,700]
 +
-.. Check and confirm that it fails on the *image-check* step as the image has the "rpm" and "yum" package managers installed. Notice the suggestion from the *image-check* step:
+.. イメージに"rpm"と"yum"パッケージマネージャーがインストールされているため、*image-check*ステップで失敗することを確認し、確認します。*image-check*ステップからの提案に注目してください:
 +
 image:images/lab4-devsecops92.png[300,700]
 +
-.. We will effectively update the image with this remediation suggestion.
-. Instead of updating the `s2i-java-11` Tekton task, we are replacing the task.
-.. From the OpenShift Administrator UI, make sure the ocp-workshop project is selected before going to Pipelines > Tasks and delete the s2i-java-11 task.
+.. この改善案で効果的に Image を更新していきます。
+. Tekton タスク `s2i-java-11` を更新するのではなく、タスクを置き換えます。
+.. OpenShift Administrator UIから、ocp-workshopプロジェクトが選択されていることを確認してから、Pipelines > Tasksに移動し、s2i-java-11タスクを削除してください。
 +
 image:images/lab4-devsecops93.png[300,700]
 +
-.. With the Tekton cli
+.. Tekton cli で
 +
 |===
 |tkn task delete s2i-java-11
 |===
 +
-. Apply the new update task from the command terminal:
+. コマンドターミナルから新しい更新タスクを適用します:
 +
 |===
 |kubectl apply -f https://raw.githubusercontent.com/RedHatDemos/SecurityDemos/master/2021Labs/OpenShiftSecurity/documentation/labs-artifacts/s2ijava-mgr.yaml --namespace=ocp-workshop
-|or,
+|または
 |oc apply -f https://raw.githubusercontent.com/RedHatDemos/SecurityDemos/master/2021Labs/OpenShiftSecurity/documentation/labs-artifacts/s2ijava-mgr.yaml  -n ocp-workshop
 |===
 +
-. Re-run the pipeline, the deployment now succeeds. Congratulations to the developers!
-. The pipeline run result will be similar to the one below.
+. パイプラインを再実行すると、デプロイメントが成功しました。developersの皆さん、おめでとうございます!
+. パイプラインの実行結果は以下のようになります。
 +
 image:images/lab4-bonus-result.png[300,700]
 +
-[Note] Please check the https://raw.githubusercontent.com/RedHatDemos/SecurityDemos/master/2021Labs/OpenShiftSecurity/documentation/labs-artifacts/s2ijava-mgr.yaml[*labs-artifacts/s2ijava-mgr.yaml]*** **file for more details on how the image was fixed. We have added a step to the build task, and we leverage buildah to remove the package managers from the image (search for "rpm" or "yum" in the file).
+[注意] https://raw.githubusercontent.com/RedHatDemos/SecurityDemos/master/2021Labs/OpenShiftSecurity/documentation/labs-artifacts/s2ijava-mgr.yaml[*labs-artifacts/s2ijava-mgr.yaml]*** **ファイルに、どのように画像が修正されたかの詳細が記載されていますので、ご確認ください。ビルドタスクにステップを追加し、buildahを活用してイメージからパッケージマネージャーを削除しています(ファイル内で "rpm" or "yum" を検索してください)。
 +
 image:images/lab4-devsecops94.png[300,700]
 
-=== Bonus exercise: Temporarily Snoozing CVEs
+=== Bonus exercise: CVEを一時的にスヌーズする
 
-If we just want to snooze a particular CVEs instead of fixing the image and adding an exception to the policy for the build. ACS allows users to temporarily disable the CVEs for a period of time.
+もし、Imageを修正したり、ビルドのポリシーに例外を追加する代わりに、特定のCVEsをスヌーズしたいだけなら。ACSでは、ユーザーが一定期間、CVEを一時的に無効にすることができます。
 
-[Note] Snoozing the CVEs will temporarily disable the CVEs for all policies.
+[注意] CVEs をスヌーズすると、すべてのポリシーで CVEs が一時的に無効になります。
 
-For this lab, we can snooze the CVEs that cause the image-check to fail and continue to build the pipeline. We will see the image-check task is reporting the violations information from the log.
+このラボでは、イメージチェックに失敗する原因となる CVE をスヌーズして、パイプラインの構築を続行します。image-checkタスクがログから違反情報を報告していることがわかります。
 
 
 image:images/lab4-devsecops95.png[300,700]
 
-In some situations, we may want to snooze the CVEs for a period of time. Here are the steps:
+状況によっては、CVE を一定期間スヌーズさせたい場合があります。以下はその手順です:
 
-. Go to the ACS console via the `waffle icon` and click on the `Red Hat Advanced Clustered Security for Kubernetes` link.
-Click Vulnerability Management left menu and click on the CVEs button  on the top.
-. We can look for the CVEs to snooze and set up snooze by selecting the duration is needed.
+.  `waffle icon` からACSコンソールに移動し、`Red Hat Advanced Clustered Security for Kubernetes` のリンクをクリックします。
+左メニューのVulnerability Managementをクリックし、上部にあるCVEsボタンをクリックします。
+. スヌーズするCVEを探し、必要な期間を選択してスヌーズを設定することができます。
 +
 image:images/lab4-devsecops96.png[300,700]
 
 
-=== Bonus exercise: Notification
+=== Bonus exercise: 通知
 
-ACS can be integrated with several Notifiers for alerting if certain events happen in the clusters managed. In our case, we integrated with Slack to receive notifications when some Policies are violated to have more useful information:
+ACSは、管理するクラスタで特定のイベントが発生した場合にアラートを出すために、いくつかのNotifiersと統合することができます。私たちの場合は、より有用な情報を得るために、Slackと統合し、いくつかのPoliciesが違反されたときに通知を受け取れるようにしています:
 
 image:images/lab4-devsecops97.png[300,500]
 
-These policy notifications can be enabled by each system policy enabled in our system, so we can create our own notification baseline in order to have only the proper information received in our systems. +
-Here are the steps to set up slack integration with ACS based on the official https://help.stackrox.com/docs/integrate-with-other-tools/integrate-with-slack/[Integrate with Slack] documentation in Stackrox.
+これらのポリシー通知は、システムで有効になっているシステムポリシーごとに有効にすることができるので、システムで適切な情報だけを受け取るために、独自の通知ベースラインを作成することができます。 +
+以下、Stackroxの公式ドキュメント https://help.stackrox.com/docs/integrate-with-other-tools/integrate-with-slack/[Integrate with Slack] を元に、ACSとslackの連携を設定する手順を紹介します。
 
-. Create a Slack App, enable Incoming Webhooks and get the Webhook URL using instruction https://docs.openshift.com/acs/3.69/integration/integrate-with-slack.html#configure-slack_integrate-with-slack[here]
+. Slack App を作成し、Incoming Webhooks を有効にして、手順 https://docs.openshift.com/acs/3.69/integration/integrate-with-slack.html#configure-slack_integrate-with-slack[here] を使って Webhook URL を取得します。
 +
 image:images/lab4-slack.png[300,500]
 +
-. Select `Platform Configuration` -> `Integration`
+. `Platform Configuration` -> `Integration` を選択します。
 +
 image:images/lab4-devsecops98.png[100,300]
 +
-. Click `Slack` and Click `New integration`
-. Enter Slack App information in the form below.
+. `Slack` をクリックし、`New integration` をクリックします。
+. 以下のフォームにSlack Appの情報を入力してください。
 +
 image:images/lab4-slack-int.png[100,300]
 +
-. Enable the Notifications in the system policies: Select `Platform Configuration` -> `Policies`
-. -> Select a Policy -> Click `Actions` -> `Edit policy`
+. システムポリシー上で Notification を有効にします: `Platform Configuration` -> `Policies` を選択します。
+. -> Policy を選択 -> `Actions` -> `Edit policy` をクリックします。
 +
 image:images/lab4-devsecops99.png[300,700]
 
-=== Troubleshooting
+=== トラブルシューティング
 
-==== Code Analysis Failures
+==== コード分析の失敗
 
-- Issue:
-Sometimes Code Analysis raises an error when mvn is running the maven install 'sonar:sonar':
+- 課題:
+mvn が maven install 'sonar:sonar' を実行しているときに、Code Analysis がエラーを出すことがあります:
 
 [source]
 ----
@@ -778,8 +778,8 @@ classpath.[m
 [[1;31mERROR[m]
 ----
 
-- Resolution:
-Just rerun the pipeline and will succeed without changing anything additional. The results will succeed afterward:
+- 解決方法:
+パイプラインを再実行すれば、追加で何かを変更することなく成功します。その後、結果は成功します:
 [source]
 ----
 [[1;34mINFO[m] Analyzed bundle 'petclinic' with 20 classes+
@@ -800,14 +800,14 @@ Just rerun the pipeline and will succeed without changing anything additional. T
 [[1;34mINFO[m] [1m------------------------------------------------------------------------[m
 ----
 
-==== JUnit Tests Failures
+==== JUnit テストの失敗
 
-Refer to the Code Analysis. Just rerun it. It will fix the error.
+コード解析を参照。再実行するだけです。エラーが修正されます。
 
-====  Failure uploading the zap proxy report into the upload server
+====  アップロードサーバーへのzapプロキシレポートのアップロードに失敗しました。
 
 
-After the zap proxy task is executed the upload to the report repo server fails due to wrong folder structure:
+zap proxy タスクが実行された後、間違ったフォルダ構造のためにレポートリポサーバへのアップロードに失敗する:
 [source]
 ----
 + ls -lhrt /zap/wrk
@@ -826,13 +826,13 @@ Uploading the report into the report server
 {"message":"Internal Server Error"}
 ----
 
-Fix the zap-proxy task and replace the line 99, with the content of the following curl to upload properly
+zap-proxyタスクを修正し、99行目を以下の curl の内容に置き換えることで、正しくアップロードできるようになります。
 [source]
 ----
 curl -u $(params.REPORTS_REPO_USERNAME):$(params.REPORTS_REPO_PASSWORD) -F path=$PIPELINERUN_NAME/$PIPELINERUN_NAME.html -F file=@/zap/wrk/$PIPELINERUN_NAME.html -X POST $(params.REPORTS_REPO_HOST)/upload; echo ""
 ----
 
-After that rerun the pipeline and check that effectively the zap proxy report its uploaded to the reports server:
+その後、パイプラインを再実行し、効果的にzapプロキシレポートがレポートサーバーにアップロードされることを確認します:
 [source]
 ----
 + curl -u reports:reports -F path=petclinic-build-dev-6f4569/petclinic-build-dev-6f4569.html -F file=@/zap/wrk/petclinic-build-dev-6f4569.html -X POST http://reports-repo:8080/upload
