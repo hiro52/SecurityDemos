@@ -1,24 +1,24 @@
-== Lab 2: Implementing network isolation between running containers using Network Policies
+== Lab 2: Network Policiesを使用した実行中のコンテナ間のネットワーク分離の実装
 
 
-=== Goal of Lab 2
-The goal of this lab is to learn about how to implement network isolation between running containers in Red Hat OpenShift Container Platform using Software Defined Networking and Network Policies. First, we will create a few projects (K8s namespaces) and examine default out of the box network policies provided in OpenShift. Then, we will use Network Policies to restrict which appications/projects can talk to each other by restricting the network layer to provide that network isolation between running containers with Software Defined Networking and Network Policies.
+=== Lab 2 のゴール
+このラボの目標は、Software Defined Networking とネットワークポリシーを使用して、Red Hat OpenShift Container Platform で実行中のコンテナー間のネットワーク分離を実装する方法について学習することです。まず、いくつかのプロジェクト (K8s namespaces) を作成し、OpenShift で提供されるデフォルトのネットワークポリシーを調べます。そして、ネットワークポリシーを使って、どのアプリケーションやプロジェクトがお互いに会話できるかを、ネットワーク層を制限することで、Software Defined Networking とネットワークポリシーを使って、実行中のコンテナ間のネットワーク分離を提供します。
 
-=== Introduction
+=== イントロダクション
 
-[Kubernetes](https://kubernetes.io/docs/concepts/services-networking/network-policies/ "Network Policies") are an easy way for Project Administrators to define exactly what ingress/egress traffic is allowed to any pod, from any other pod, including traffic from pods located in other projects. By default, all Pods in a project are accessible from all other Pods and network endpoints. To isolate one or more Pods in a project, you can create NetworkPolicy objects in that project to indicate the allowed incoming connections. Project administrators can create and delete NetworkPolicy objects within their own project.
+[Kubernetes](https://kubernetes.io/docs/concepts/services-networking/network-policies/ "Network Policies") は、プロジェクト管理者が、他のプロジェクトにあるPodからのトラフィックも含め、どのPodに対してどのようなingress/egressトラフィックが許されるかを正確に定義する簡単な方法です。デフォルトでは、プロジェクト内のすべてのPodは、他のすべてのPodとネットワークエンドポイントからアクセス可能です。プロジェクト内の1つまたは複数のPodを分離するには、そのプロジェクトにネットワークポリシーオブジェクトを作成して、許可される接続先を指定します。プロジェクト管理者は、自分のプロジェクト内でNetworkPolicyオブジェクトを作成および削除することができます。
 
-If a Pod is matched by selectors in one or more NetworkPolicy objects, then it will accept only connections that are allowed by at least one of those NetworkPolicy objects. A Pod that is not selected by any NetworkPolicy objects is fully accessible.
+Podが1つ以上のNetworkPolicyオブジェクトのセレクタにマッチする場合、それらのNetworkPolicyオブジェクトの最低でも1つによって許されている接続だけを受け入れることになります。どのNetworkPolicyオブジェクトにも選ばれていないPodは、完全にアクセス可能です。
 
-==== objective
-The objective of the exercise below is to create multiple projects and to test the communication between them. You will introduce network policies that will block communication across projects.
+==== 目的
+以下の演習の目的は、複数のプロジェクトを作成し、それらの間の通信をテストすることです。プロジェクト間の通信を遮断するネットワーク・ポリシーを導入します。
 
-Project-c will have a hello-world application to which you will send requests.
-Projects-a, b and c will all have a client application. The client from project-c will always be able to communication with hello-world in project-c since they are in the same project. However, depending on the network policies in place at times you will be blocked from communicating from clients in projects a and b to the hello-world application in project c.
+Project-cは、リクエストを送信するhello-worldアプリケーションを使用します。
+Project-a、b、c はすべて、クライアントアプリケーションを持ちます。Project-cのクライアントは、Project-cのhello-worldと同じプロジェクトに属しているので、常に通信することができます。しかし、ネットワークポリシーによっては、Project-a と b のクライアントからProject-c の hello-world アプリケーションへの通信がブロックされる場合があります。
 
-=== Lab 2.1 Creating Projects and Labeling Namespaces
+=== Lab 2.1 プロジェクトの作成とネームスペースのラベル付け
 
-. As a cluster admin user, create 3 projects and label those namespaces.
+. クラスタ管理ユーザーとして、3つのプロジェクトを作成し、それらのnamespaceにラベルを付けます。
 +
 [source]
 ----
@@ -28,7 +28,7 @@ Projects-a, b and c will all have a client application. The client from project-
 
 ----
 
-. In order to create Network Policies and allow applications in one namespace to be accesssed by applications running in only certain other namespace, you have to label the namespaces so they can be identified in Network Policies (and this is why you have to be 'cluster-admin' level user):
+. ネットワークポリシーを作成し、あるネームスペースのアプリケーションを他の特定のネームスペースで実行されているアプリケーションからのみアクセスできるようにするには、ネットワークポリシーで識別できるようにネームスペースをラベル付けする必要があります（このため、「cluster-admin」レベルのユーザーである必要があります）:
 +
 [source]
 ----
@@ -37,7 +37,7 @@ oc label namespace proj-b name=proj-b
 oc label namespace proj-c name=proj-c
 ----
 
-. Now, let's look at the projects and labels we just created:
+. では、先ほど作成したプロジェクトとラベルを見てみましょう:
 +
 [source]
 ----
@@ -46,9 +46,9 @@ oc get projects proj-a proj-b proj-c --show-labels
 +
 image:images/lab2.1-showlabels.png[]
 
-=== Lab 2.1 Creating the 'hello world' microservice and client pod in proj-c
+=== Lab 2.1 proj-c で 'hello world' マイクロサービスとクライアントポッドを作成する
 
-. Let's go into the project named *proj-c* and create 2 pods and a service.
+. *proj-c* という名前のプロジェクトに入り、2つのポッドと1つのサービスを作成しましょう。
 +
 [source]
 ----
@@ -57,9 +57,9 @@ image:images/lab2.1-showlabels.png[]
 [localhost ~]$ oc new-app quay.io/bkozdemb/hello --name="hello"
 
 ----
-This will create a new app, which is a 'hello world' container based on image stored in quay.io that’s built on the RHEL base python image. It runs a simple web server that prints 'hello'.
+これは quay.io に保存されているイメージを元にした 'hello world' コンテナで、RHEL ベースの Python イメージで構築されたものです。これは 'hello' を表示するシンプルな Web サーバを実行します。
 
-. Next, let's confirm that the 2 pods are starting to run.
+. 次に、2つのPodが実行され始めたことを確認しましょう。
 +
 [source]
 ----
@@ -68,7 +68,7 @@ oc get pods
 +
 image:images/lab2.1-ocgetpods.png[]
 
-. Now, let's create and run the client pod, which is a Fedora base image. When the image is running, notice the command that’s being run (tail -f /dev/null), which essentially prevents the pod from running and then immediately quitting. This client pod will be used to run a curl command later.
+. 今度は、Fedoraベースのイメージであるクライアントポッドを作成し、実行してみましょう。イメージが実行されているとき、実行されているコマンドに注目してください (tail -f /dev/null) これは、本質的にポッドが実行されてすぐに終了するのを防ぐためのものです。このクライアントポッドは、後でcurlコマンドを実行するために使用されます。
 +
 [source]
 ----
@@ -77,7 +77,7 @@ image:images/lab2.1-ocgetpods.png[]
 pod/client created
 
 
-. Let's confirm that our client pod and hello world pod are now running.
+. クライアントポッドとhello worldポッドが実行されたことを確認しましょう。
 +
 [source]
 ----
@@ -86,7 +86,7 @@ oc get pods
 +
 image:images/lab2.1-ocgetpods2.png[]
 
-. Next, let's create similar client pods in other projects named *proj-a* and *proj-b*.
+. 次に、*proj-a* と *proj-b* という名前の他のプロジェクトに同様のクライアントPodを作成してみましょう。
 +
 [source]
 ----
@@ -98,7 +98,7 @@ image:images/lab2.1-ocgetpods2.png[]
 
 ----
 
-. Notice that the projects , *proj-a* and *proj-b* just have client pods running.
+. プロジェクト *proj-a* と *proj-b* では、クライアントポッドが実行されているだけであることに注意してください。
 +
 [source]
 ----
@@ -108,7 +108,7 @@ oc get pods -n proj-b
 +
 image:images/lab2.1-ocgetpods3.png[]
 
-. As we saw in the previous steps, *proj-c*, has both a client pod and the service (as a part of 'hello world' app).
+. 前のステップで見たように、*proj-c* には、クライアント・ポッドとサービス (「hello world」アプリの一部) の両方があります。
 +
 [source]
 ----
@@ -117,7 +117,7 @@ oc get pods -n proj-c
 +
 image:images/lab2.1-ocgetpods4.png[]
 
-. When the client pod is ready, display pod information with their labels.
+. クライアントポッドの準備ができたら、ポッド情報とそのラベルを表示します。
 +
 [source]
 ----
@@ -127,9 +127,9 @@ oc get pods --show-labels
 image:images/lab2.1-showlabels2.png[]
 
 
-. Notice that the label that we’re using for Client pod is *run=client* which is created automatically by our previous 'oc run client' command.
+. Clientポッドに使用しているラベルは *run=client* で、前回の 'oc run client' コマンドで自動的に作成されたものであることに注意してください。
 
-. Next, from a different project, *proj-a*, connect to the Client container and try to access the *hello.proj-c* service in project, *proj-c*. The default network policy allows a client pod in *proj-a* to access the microservice in *proj-c*.
+. 次に、別のプロジェクト *proj-a* から Client コンテナに接続し、プロジェクト *proj-c* 内の *hello.proj-c* サービスにアクセスしようとします。デフォルトのネットワーク・ポリシーでは、*proj-a* のクライアント・ポッドから *proj-c* のマイクロサービスにアクセスすることが許可されています。
 
 +
 [source]
@@ -137,7 +137,7 @@ image:images/lab2.1-showlabels2.png[]
 oc project proj-a
 POD=`oc get pods --selector=run=client --output=custom-columns=NAME:.metadata.name --no-headers`
 ----
-This command above simply assigns the pod name to the *POD* variable since some pods have random names by default so this command allows you to give a specific name to the pod.
+上記のコマンドは、単にポッド名を*POD*変数に代入しています。ポッドによってはデフォルトでランダムな名前を持っているので、このコマンドでポッドに特定の名前を与えることができます。
 +
 [source]
 ----
@@ -147,8 +147,8 @@ echo $POD
 image:images/lab2.1-echopod.png[]
 
 +
-This returns *client*, which is the pod name.
-Next, go into the pod and curl the service in project, *proj-c*. Notice that this is allowed since it's open access by default.
+これは、ポッド名である *client* を返します。
+次に、ポッドに入り、プロジェクト内のサービス、*proj-c* にcurlを実行します。デフォルトではオープンアクセスなので、これが許可されていることに注意してください。
 
 +
 [source]
@@ -160,8 +160,8 @@ curl -v hello.proj-c:8080
 +
 image:images/lab2.1-curloutput1.png[]
 
-. What you have seen so far is how Network Policies work by default in OpenShift. 
-Now let's take a look at the default Network Policies in the OpenShift web console. URL of web console can be found by running command:
+. ここまで見てきたのは、OpenShiftでNetwork Policiesがデフォルトでどのように動作するかということです。
+では、OpenShiftのWebコンソールで、デフォルトのNetwork Policiesを見てみましょう。WebコンソールのURLは、コマンドを実行することで確認できます:
 +
 [source]
 ----
@@ -169,7 +169,7 @@ Now let's take a look at the default Network Policies in the OpenShift web conso
 https://console-openshift-console.apps.cluster-tx8sn.tx8sn.sandbox1590.opentlc.com
 ----
 
-. Log into the web console, then go to Projects and find the project, *proj-c*. Navigate into *proj-c*, then select *Networking* -> *Network Policies*.
+. Web Consoleにログインし、[Projects]からプロジェクト(*proj-c*)を探します。*proj-c* に移動し、*Networking* -> *Network Policies* を選択します。
 
 +
 image:images/lab2.1.10-webconsole2.png[]
@@ -177,34 +177,34 @@ image:images/lab2.1.10-webconsole1.png[]
 
 
 
-. Notice that (in earlier versions of OpenShift) those two Network Policies are created by default:
+. (以前のバージョンのOpenShiftでは)これらの2つのNetwork Policiesがデフォルトで作成されていることに注意してください:
 
 
-* *allow-from-all-namespaces*: This is why we can hit services in the project, *proj-c* from other projects (such as projects, *proj-a* and *proj-b*).
-* *allow-from-ingress-namespace*: This allows ingress from the router (outside in through the router).
+* *allow-from-all-namespaces*: これによって、他のプロジェクト(プロジェクト、*proj-a*や*proj-b*など)からプロジェクト、*proj-c*のサービスを叩くことができるのです。
+* *allow-from-ingress-namespace*: ルーターからのingress（ルーターを経由して外部からの侵入）を許可します。
 
 +
-NOTE:  In the recent versions of OpenShift 4.x those default Network Policies are no longer present. As a result, if no Network Policies are defined, all traffic is allowed.
+注：OpenShift 4.xの最近のバージョンでは、これらのデフォルトのNetwork Policiesは存在しなくなりました。その結果、Network Policies が定義されていない場合、すべてのトラフィックが許可されます。
 
-=== Lab 2.2 Creating Network Policies for network isolation
-. In the OpenShift web console, choose project, *proj-c*, and go to *Networking* -> *Network Policies*.
+=== Lab 2.2 ネットワーク分離のためのNetwork Policiesの作成
+. OpenShift Web Consoleで、プロジェクト、*proj-c* を選択し、*Networking* -> *Network Policies* に進みます。
 
-. Next, delete the 2 default Network Policies (*allow-from-all-namespaces* and *allow-from-ingress-namespace*) if you see them. Remember that if no Network Policies are defined, all traffic is allowed.
+. 次に、2つのデフォルトのNetwork Policies (*allow-from-all-namespaces* と *allow-from-ingress-namespace*) があれば、これを削除してください。ネットワークポリシーが定義されていない場合、すべてのトラフィックが許可されることを忘れないでください。
 +
 image:images/lab2.2.2-deletenetworkpolicies.png[]
 
-. Now, create a new Network Policy in project, *proj-c* that denies traffic from other namespaces. It should be
-the first example shown on the right in the Sample Network policies. Notice there are a lot of Sample Network Policies. Apply the first example *Limit access to the current namespace*. Click Try it. This creates the yaml. Next, press *create*.
+. 今度は、他の名前空間からのトラフィックを拒否する新しいネットワークポリシーをプロジェクト、*proj-c*に作成します。
+これは サンプル・ネットワーク・ポリシーの右側に表示されている最初の例です。サンプル・ネットワーク・ポリシーがたくさんあることに注意してください。最初の例である *Limit access to the current namespace* を適用します。[Try it］をクリックします。これでyamlが作成されます。次に、*create* をクリックします。
 +
 image:images/lab2.2-createnetworkpolicies1.png[]
 image:images/lab2.2-createnetworkpolicies2-new.png[]
 
 
-. Now, navigate into *Networking* -> *Network Policies*. and notice that the *deny-other-namespaces* network policy is defined.
+. ここで、*Networking* -> *Network Policies* に移動して、*deny-other-namespaces* ネットワークポリシーが定義されていることに注意してください。
 +
 image:images/lab2.2-denyothernamespaces.png[]
 
-. Next, try to curl the hello world service in project, *proj-c* from the client in *proj-a*. Notice that the curl fails this time.
+. 次に、*proj-a*のクライアントから、*proj-c*のプロジェクトのhello worldサービスをcurlしてみます。今度はcurlの実行に失敗していることに注意してください。
 +
 [source]
 ----
@@ -215,24 +215,24 @@ curl -v hello.proj-c:8080
 +
 image:images/lab2.2-curlfail.png[]
 +
-Remember to exit the pod with the `exit` command.
+`exit`コマンドでポッドを終了するのを忘れないようにしましょう。
 
 
 
-. Same kind of failure you would get if you try to access application running in *proj-c* from *proj-b* because the Network Policy blocks traffic from ALL namespaces
+. ネットワークポリシーがすべてのnamespaceからのトラフィックをブロックするため、*proj-c*で動作しているアプリケーションに*proj-b*からアクセスしようとすると、同じような失敗が発生します。
 
-=== Lab 2.3 Creating Network Policies for selective network access
+=== Lab 2.3 選択的なネットワークアクセスのためのネットワークポリシーの作成
 
-. Here you will create additional Network Policy that will allow access to pods running in *proj-c* from those running in different projects, selected by their labels. In the previous lab you created a Network Policy that denies access to all pods in *proj-c* from other projects. 
-. Now, similar to Lab 2.2, let's create a Network Policy that is based on the sample "ALLOW traffic from all Pods in a particular namespace". In the 'podSelector.matchLabels' section specify 'deployment:hello' to select the 'hello' pods and in the 'namespaceSelector.matchLabels' section specify 'name:proj-a' to indicate that you will allow traffic from apps deployed in that namespace (recall that we labeled it with 'name:proj-a'). Press *Create* to create that Network Policy
+. ここでは、ラベルによって選択された異なるプロジェクトで実行されているポッドから *proj-c* で実行されているポッドへのアクセスを許可する、追加のネットワーク・ポリシーを作成します。前のラボでは、他のプロジェクトからの *proj-c* 内のすべてのポッドへのアクセスを拒否するネットワーク・ポリシーを作成しました。 
+. では、ラボ2.2と同様に、"特定のnamespace内のすべてのPodからのトラフィックをALLOWする"というサンプルに基づいたNetwork Policyを作成しましょう。'podSelector.matchLabels' セクションで 'deployment:hello' を指定して 'hello' Podを選択し、'namespaceSelector.matchLabels' セクションで 'name:proj-a' を指定してその名前空間に配置されたアプリ（ 'name:proj-a' でラベル付けしたことを思い出しましょう）からトラフィックを許可することを指示します。*Create* を押して、Network Policy を作成します。
 +
 image:images/lab2.3-allow-traffic-from-proj-a.png[]
 
-. Now, navigate into *Networking* -> *Network Policies*. and notice that the *web-allow-production* Network Policy is there:
+. さて、*Networking* -> *Network Policies*に移動して、*web-allow-production*ネットワークポリシーがそこにあることに注意してください:
 +
 image:images/lab2.3-policies-list.png[]
 
-. Next, again try to curl the 'hello world' service in project *proj-c* from the client running in *proj-a*. Notice that the curl succeeds this time because ingress traffic is explicitely allowed from *proj-a* to our 'hello world' pod 
+. 次に、*proj-a* で実行されているクライアントから、プロジェクト *proj-c* の 'hello world' サービスをcurlすることを再度試みます。なぜなら、*proj-a* から私たちの'hello world'ポッドへのイングレストラフィックは明示的に許可されているからです。 
 +
 [source]
 ----
@@ -242,7 +242,7 @@ sh-5.0# curl -v hello.proj-c:8080
 +
 image:images/lab2.3-curl-from-proj-a-ok.png[]
 
-. Next, try to curl the 'hello world' service in project *proj-c* from the client running in *proj-b*. Notice that the curl still fails because the first Network Policy still blocks it and the second one is not applicable to pods in *proj-b*:
+. 次に、*proj-b* で実行されているクライアントから、プロジェクト *proj-c* の'hello world'サービスをcurlしてみましょう。最初のネットワークポリシーがまだブロックしており、2番目のネットワークポリシーが *proj-b* のポッドに適用できないため、curlはまだ失敗していることに注意してください:
 +
 [source]
 ----
