@@ -15,7 +15,7 @@
 
 *Shanna Chan*, Principal Specialist Solutions Architect, Red Hat^(R)^
 
-=== [.underline]#Lab Testers#:
+=== [.underline]#Lab テスター#:
 *Pedro Ibáñez Requena*, Principal Software Engineer, Red Hat^(R)^
 
 *Nicholas Schuetz*, Principal Specialist Solution Architect,Red Hat^(R)^
