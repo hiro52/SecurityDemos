@@ -38,7 +38,7 @@
 このラボは、システム管理者、クラウド管理者、アーキテクト、その他インフラストラクチャ運用管理に携わる方で、1 つ以上の Red Hat 製品を使用して異種インフラストラクチャ全体のセキュリティとコンプライアンスを自動化する方法を学習する方を対象としています。 このラボの前提条件には、Red Hat Certified System Administrator (RHCSA) で得た Linux の基本スキル、または同等のシステム管理スキルが含まれます。仮想化の知識と基本的な Linux スクリプトの知識もあれば便利ですが、必須ではありません。
 
 
-== 目次
+== 目次:
 * link:lab1.adoc[Lab 1: OpenShiftが特権ユーザーで実行される「不正な」コンテナをブロックする]
 * link:lab2.adoc[Lab 2: Network Policiesを使用した実行中のコンテナ間のネットワーク分離の実装]
 * link:lab3.adoc[Lab 3: OpenShift Role Based Access Control (RBAC)]
